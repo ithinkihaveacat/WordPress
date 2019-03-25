@@ -6,6 +6,13 @@ theme](https://developer.wordpress.org/themes/advanced-topics/child-themes/) of
 customizations of fonts and so forth, made to be compatible with AMP via
 <https://amp-wp.org/>.
 
+There are two broad steps: (1) generate the customised version of the
+`twentynineteen` CSS (fairly straightforward) then; (2) pipe it through a
+WordPress instance to ensure all necessary transformations are applied (hard).
+
+It would be useful it if wasn't necessary to get a version of WordPress going to
+do step (2), but I don't know how to to this...
+
 1.
 
 **Generate the theme**
