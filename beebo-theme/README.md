@@ -84,17 +84,23 @@ $ docker-compose down
 
 ## More Info
 
-Useful SCSS files:
+Useful files:
 
-  * A few files in `wp-content/themes/twentynineteen/sass/veriables-sites`,
-    especially `_fonts.scss` and `_colors.scss`.
-
-The [AMP WordPress Plugin](https://wordpress.org/plugins/amp/) does various
-transformation of the CSS to make `twentynineteen` AMP-compatible, among them:
-
-  * <https://github.com/ampproject/amp-wp/blob/develop/includes/sanitizers/class-amp-core-theme-sanitizer.php>
-  * <https://github.com/ampproject/amp-wp/blob/develop/includes/sanitizers/class-amp-style-sanitizer.php>
-
-There doesn't seem to be a list of CSS classes that need to be "supported" by a
-theme--? Seems like the best way to figure out what styles exist it to generate
-WordPress content (posts and pages) and copy the CSS from there.
+  * **For high-level configuration (e.g. fonts)**, check
+    `wp-content/themes/twentynineteen/sass/variables-sites`, especially
+    [`_fonts.scss`](https://github.com/WordPress/WordPress/blob/master/wp-content/themes/twentynineteen/sass/variables-site/_fonts.scss)
+    and
+    [`_colors.scss`](https://github.com/WordPress/WordPress/blob/master/wp-content/themes/twentynineteen/sass/variables-site/_colors.scss).
+  * For info on **what styles/templates are "supported" by the generated CSS**,
+    you'll need to look at either the generated HTML (i.e. use WordPress to
+    create a sample page, inspect the generated HTML), or the PHP source code. (There's no CSS common across all WordPress themes, although many are based on [`_s`](https://github.com/automattic/_s).)
+    * For example,
+    [`page.php`](https://github.com/WordPress/WordPress/blob/master/wp-content/themes/twentynineteen/page.php)
+    contains the (fairly readable) PHP code that generates a "page", including
+    the classes that may be output in various situations.
+  * See the
+    [sanitizers](https://github.com/ampproject/amp-wp/blob/develop/includes/sanitizers/)
+    directory of the AMP WordPress plugin for info on what transformations are
+    necessary to make `twentynineteen` AMP-compatible.
+    * For example, [`class-amp-core-theme-sanitizer.php`](https://github.com/ampproject/amp-wp/blob/develop/includes/sanitizers/class-amp-core-theme-sanitizer.php), [`class-amp-style-sanitizer.php`](https://github.com/ampproject/amp-wp/blob/develop/includes/sanitizers/class-amp-style-sanitizer.php).
+  * **Trouble debugging?** See [I make changes and nothing happens](https://wordpress.org/support/article/i-make-changes-and-nothing-happens/).
