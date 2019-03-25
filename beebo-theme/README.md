@@ -74,7 +74,15 @@ Upload the `beebo.zip` as generated in (1).
 
 Load <http://localhost:8000/> and copy the CSS from the `<style amp-custom>...</style>`.
 
-## Details
+8.
+
+**Stop the Docker container**
+
+```sh
+$ docker-compose down
+```
+
+## More Info
 
 Useful SCSS files:
 
@@ -86,3 +94,7 @@ transformation of the CSS to make `twentynineteen` AMP-compatible, among them:
 
   * <https://github.com/ampproject/amp-wp/blob/develop/includes/sanitizers/class-amp-core-theme-sanitizer.php>
   * <https://github.com/ampproject/amp-wp/blob/develop/includes/sanitizers/class-amp-style-sanitizer.php>
+
+There doesn't seem to be a list of CSS classes that need to be "supported" by a
+theme--? Seems like the best way to figure out what styles exist it to generate
+WordPress content (posts and pages) and copy the CSS from there.
