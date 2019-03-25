@@ -104,3 +104,4 @@ Useful files:
     necessary to make `twentynineteen` AMP-compatible.
     * For example, [`class-amp-core-theme-sanitizer.php`](https://github.com/ampproject/amp-wp/blob/develop/includes/sanitizers/class-amp-core-theme-sanitizer.php), [`class-amp-style-sanitizer.php`](https://github.com/ampproject/amp-wp/blob/develop/includes/sanitizers/class-amp-style-sanitizer.php).
   * **Trouble debugging?** See [I make changes and nothing happens](https://wordpress.org/support/article/i-make-changes-and-nothing-happens/).
+  * **[Finding You CSS Styles](https://codex.wordpress.org/Finding_Your_CSS_Styles)**
