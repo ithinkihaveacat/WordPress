@@ -26,7 +26,7 @@ $ ./build # generates beebo.zip in the current directory
 **Start a Docker container running WordPress**
 
 ```sh
-$ `docker-compose up -d` # starts WordPress on http://localhost:8000
+$ docker-compose up -d # starts WordPress on http://localhost:8000
 ```
 
 3.
