@@ -1,0 +1,40 @@
+$fontface_url_prefix: "font/finlandica";
+
+@font-face {
+  font-family: "finlandica";
+  src: url("#{$fontface_url_prefix}/finlandica-boldWeb.woff2") format("woff2"),
+    url("#{$fontface_url_prefix}/finlandica-boldWeb.woff") format("woff"),
+    url("#{$fontface_url_prefix}/finlandica-boldWeb.ttf") format("truetype");
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "finlandica";
+  src: url("#{$fontface_url_prefix}/finlandica-bolditalicWeb.woff2")
+      format("woff2"),
+    url("#{$fontface_url_prefix}/finlandica-bolditalicWeb.woff") format("woff"),
+    url("#{$fontface_url_prefix}/finlandica-bolditalicWeb.ttf")
+      format("truetype");
+  font-weight: bold;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "finlandica";
+  src: url("#{$fontface_url_prefix}/finlandica-italicWeb.woff2") format("woff2"),
+    url("#{$fontface_url_prefix}/finlandica-italicWeb.woff") format("woff"),
+    url("#{$fontface_url_prefix}/finlandica-italicWeb.ttf") format("truetype");
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "finlandica";
+  src: url("#{$fontface_url_prefix}/finlandica-regularWeb.woff2")
+      format("woff2"),
+    url("#{$fontface_url_prefix}/finlandica-regularWeb.woff") format("woff"),
+    url("#{$fontface_url_prefix}/finlandica-regularWeb.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
