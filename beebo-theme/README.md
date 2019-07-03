@@ -56,17 +56,14 @@ uploading the zip file.
 
 Either choose `AMP | General` in the menu, or go to <http://localhost:8000/wp-admin/admin.php?page=amp-options>:
 
-  * Template Mode:
-    * Set to "Native"
-  * Validation Handling:
-    * Disable "Automatically remove CSS rules"
-    * Enable "Disable admin bar on AMP pages"
+  * Website Mode:
+    * Set to "Standard"
 
 6.
 
 **Install the "Beebo" theme**
 
-Upload the `beebo.zip` as generated in (1) via [Add Themes](http://localhost:8000/wp-admin/theme-install.php?browse=featured).
+Upload the `beebo.zip` as generated in (1) via [Add Themes](http://localhost:8000/wp-admin/theme-install.php?browse=featured) and activate it.
 
 7.
 
