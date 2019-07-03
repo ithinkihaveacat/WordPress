@@ -226,6 +226,8 @@ foreach ( $image_size_names as $image_size_slug => $image_size_name ) {
 // Lock settings.
 $user_id = wp_check_post_lock( $post->ID );
 if ( $user_id ) {
+	$locked = false;
+
 	/** This filter is documented in wp-admin/includes/post.php */
 	if ( apply_filters( 'show_post_locked_dialog', true, $post, $user_id ) ) {
 		$locked = true;
@@ -247,9 +249,13 @@ if ( $user_id ) {
 } else {
 	// Lock the post.
 	$active_post_lock = wp_set_post_lock( $post->ID );
-	$lock_details     = array(
+	if ( $active_post_lock ) {
+		$active_post_lock = esc_attr( implode( ':', $active_post_lock ) );
+	}
+
+	$lock_details = array(
 		'isLocked'       => false,
-		'activePostLock' => esc_attr( implode( ':', $active_post_lock ) ),
+		'activePostLock' => $active_post_lock,
 	);
 }
 

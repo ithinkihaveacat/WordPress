@@ -226,7 +226,11 @@ function upload_is_user_over_quota( $echo = true ) {
 
 	if ( ( $space_allowed - $space_used ) < 0 ) {
 		if ( $echo ) {
-			_e( 'Sorry, you have used your space allocation. Please delete some files to upload more files.' );
+			printf(
+				/* translators: %s: allowed space allocation */
+				__( 'Sorry, you have used your space allocation of %s. Please delete some files to upload more files.' ),
+				size_format( $space_allowed * MB_IN_BYTES )
+			);
 		}
 		return true;
 	} else {
@@ -245,15 +249,7 @@ function display_space_usage() {
 
 	$percent_used = ( $space_used / $space_allowed ) * 100;
 
-	if ( $space_allowed > 1000 ) {
-		$space = number_format( $space_allowed / KB_IN_BYTES );
-		/* translators: Gigabytes */
-		$space .= __( 'GB' );
-	} else {
-		$space = number_format( $space_allowed );
-		/* translators: Megabytes */
-		$space .= __( 'MB' );
-	}
+	$space = size_format( $space_allowed * MB_IN_BYTES );
 	?>
 	<strong>
 	<?php
@@ -371,7 +367,8 @@ function update_user_status( $id, $pref, $value, $deprecated = null ) {
 function refresh_user_details( $id ) {
 	$id = (int) $id;
 
-	if ( ! $user = get_userdata( $id ) ) {
+	$user = get_userdata( $id );
+	if ( ! $user ) {
 		return false;
 	}
 
@@ -798,7 +795,7 @@ function avoid_blog_page_permalink_collision( $data, $postarr ) {
  */
 function choose_primary_blog() {
 	?>
-	<table class="form-table">
+	<table class="form-table" role="presentation">
 	<tr>
 	<?php /* translators: My sites label */ ?>
 		<th scope="row"><label for="primary_blog"><?php _e( 'Primary Site' ); ?></label></th>
@@ -910,9 +907,10 @@ function confirm_delete_users( $users ) {
 	$site_admins = get_super_admins();
 	$admin_out   = '<option value="' . esc_attr( $current_user->ID ) . '">' . $current_user->user_login . '</option>';
 	?>
-	<table class="form-table">
+	<table class="form-table" role="presentation">
 	<?php
-	foreach ( ( $allusers = (array) $_POST['allusers'] ) as $user_id ) {
+	$allusers = (array) $_POST['allusers'];
+	foreach ( $allusers as $user_id ) {
 		if ( $user_id != '' && $user_id != '0' ) {
 			$delete_user = get_userdata( $user_id );
 
@@ -980,7 +978,7 @@ function confirm_delete_users( $users ) {
 				echo '</fieldset></td></tr>';
 			} else {
 				?>
-				<td><fieldset><p><legend><?php _e( 'User has no sites or content and will be deleted.' ); ?></legend></p>
+				<td><p><?php _e( 'User has no sites or content and will be deleted.' ); ?></p></td>
 			<?php } ?>
 			</tr>
 			<?php
@@ -1114,9 +1112,13 @@ function network_edit_site_nav( $args = array() ) {
 		// Link classes
 		$classes = array( 'nav-tab' );
 
+		// Aria-current attribute.
+		$aria_current = '';
+
 		// Selected is set by the parent OR assumed by the $pagenow global
 		if ( $r['selected'] === $link_id || $link['url'] === $GLOBALS['pagenow'] ) {
-			$classes[] = 'nav-tab-active';
+			$classes[]    = 'nav-tab-active';
+			$aria_current = ' aria-current="page"';
 		}
 
 		// Escape each class
@@ -1126,7 +1128,7 @@ function network_edit_site_nav( $args = array() ) {
 		$url = add_query_arg( array( 'id' => $r['blog_id'] ), network_admin_url( $link['url'] ) );
 
 		// Add link to nav links
-		$screen_links[ $link_id ] = '<a href="' . esc_url( $url ) . '" id="' . esc_attr( $link_id ) . '" class="' . $esc_classes . '">' . esc_html( $link['label'] ) . '</a>';
+		$screen_links[ $link_id ] = '<a href="' . esc_url( $url ) . '" id="' . esc_attr( $link_id ) . '" class="' . $esc_classes . '"' . $aria_current . '>' . esc_html( $link['label'] ) . '</a>';
 	}
 
 	// All done!

@@ -143,18 +143,13 @@ endif;
 
 if ( ! function_exists( 'wp_mail' ) ) :
 	/**
-	 * Send mail, similar to PHP's mail
+	 * Sends an email, similar to PHP's mail function.
 	 *
 	 * A true return value does not automatically mean that the user received the
 	 * email successfully. It just only means that the method used was able to
 	 * process the request without any errors.
 	 *
-	 * Using the two 'wp_mail_from' and 'wp_mail_from_name' hooks allow from
-	 * creating a from address like 'Name <email@address.com>' when both are set. If
-	 * just 'wp_mail_from' is set, then just the email address will be used with no
-	 * name.
-	 *
-	 * The default content type is 'text/plain' which does not allow using HTML.
+	 * The default content type is `text/plain` which does not allow using HTML.
 	 * However, you can set the content type of the email by using the
 	 * {@see 'wp_mail_content_type'} filter.
 	 *
@@ -222,7 +217,9 @@ if ( ! function_exists( 'wp_mail' ) ) :
 		}
 
 		// Headers
-		$cc = $bcc = $reply_to = array();
+		$cc       = array();
+		$bcc      = array();
+		$reply_to = array();
 
 		if ( empty( $headers ) ) {
 			$headers = array();
@@ -600,7 +597,8 @@ if ( ! function_exists( 'wp_validate_auth_cookie' ) ) :
 	 * @return false|int False if invalid cookie, User ID if valid.
 	 */
 	function wp_validate_auth_cookie( $cookie = '', $scheme = '' ) {
-		if ( ! $cookie_elements = wp_parse_auth_cookie( $cookie, $scheme ) ) {
+		$cookie_elements = wp_parse_auth_cookie( $cookie, $scheme );
+		if ( ! $cookie_elements ) {
 			/**
 			 * Fires if an authentication cookie is malformed.
 			 *
@@ -614,11 +612,12 @@ if ( ! function_exists( 'wp_validate_auth_cookie' ) ) :
 			return false;
 		}
 
-		$scheme   = $cookie_elements['scheme'];
-		$username = $cookie_elements['username'];
-		$hmac     = $cookie_elements['hmac'];
-		$token    = $cookie_elements['token'];
-		$expired  = $expiration = $cookie_elements['expiration'];
+		$scheme     = $cookie_elements['scheme'];
+		$username   = $cookie_elements['username'];
+		$hmac       = $cookie_elements['hmac'];
+		$token      = $cookie_elements['token'];
+		$expired    = $cookie_elements['expiration'];
+		$expiration = $cookie_elements['expiration'];
 
 		// Allow a grace period for POST and Ajax requests
 		if ( wp_doing_ajax() || 'POST' == $_SERVER['REQUEST_METHOD'] ) {
@@ -1041,7 +1040,8 @@ if ( ! function_exists( 'auth_redirect' ) ) :
 		 */
 		$scheme = apply_filters( 'auth_redirect_scheme', '' );
 
-		if ( $user_id = wp_validate_auth_cookie( '', $scheme ) ) {
+		$user_id = wp_validate_auth_cookie( '', $scheme );
+		if ( $user_id ) {
 			/**
 			 * Fires before the authentication redirect.
 			 *
@@ -1079,15 +1079,19 @@ endif;
 
 if ( ! function_exists( 'check_admin_referer' ) ) :
 	/**
-	 * Makes sure that a user was referred from another admin page.
+	 * Ensures intent by verifying that a user was referred from another admin page with the correct security nonce.
 	 *
-	 * To avoid security exploits.
+	 * This function ensures the user intends to perform a given action, which helps protect against clickjacking style
+	 * attacks. It verifies intent, not authorisation, therefore it does not verify the user's capabilities. This should
+	 * be performed with `current_user_can()` or similar.
+	 *
+	 * If the nonce value is invalid, the function will exit with an "Are You Sure?" style message.
 	 *
 	 * @since 1.2.0
+	 * @since 2.5.0 The `$query_arg` parameter was added.
 	 *
-	 * @param int|string $action    Action nonce.
-	 * @param string     $query_arg Optional. Key to check for nonce in `$_REQUEST` (since 2.5).
-	 *                              Default '_wpnonce'.
+	 * @param int|string $action    The nonce action.
+	 * @param string     $query_arg Optional. Key to check for nonce in `$_REQUEST`. Default '_wpnonce'.
 	 * @return false|int False if the nonce is invalid, 1 if the nonce is valid and generated between
 	 *                   0-12 hours ago, 2 if the nonce is valid and generated between 12-24 hours ago.
 	 */
@@ -1381,7 +1385,8 @@ if ( ! function_exists( 'wp_validate_redirect' ) ) :
 		}
 
 		// In php 5 parse_url may fail if the URL query part contains http://, bug #38143
-		$test = ( $cut = strpos( $location, '?' ) ) ? substr( $location, 0, $cut ) : $location;
+		$cut  = strpos( $location, '?' );
+		$test = $cut ? substr( $location, 0, $cut ) : $location;
 
 		// @-operator is used to prevent possible warnings in PHP < 5.3.3.
 		$lp = @parse_url( $test );
@@ -1535,7 +1540,7 @@ if ( ! function_exists( 'wp_notify_postauthor' ) ) :
 				/* translators: %s: comment text */
 				$notify_message .= sprintf( __( 'Comment: %s' ), "\r\n" . $comment_content ) . "\r\n\r\n";
 				$notify_message .= __( 'You can see all trackbacks on this post here:' ) . "\r\n";
-				/* translators: 1: blog name, 2: post title */
+				/* translators: Trackback notification email subject. 1: Site title, 2: Post title */
 				$subject = sprintf( __( '[%1$s] Trackback: "%2$s"' ), $blogname, $post->post_title );
 				break;
 			case 'pingback':
@@ -1548,7 +1553,7 @@ if ( ! function_exists( 'wp_notify_postauthor' ) ) :
 				/* translators: %s: comment text */
 				$notify_message .= sprintf( __( 'Comment: %s' ), "\r\n" . $comment_content ) . "\r\n\r\n";
 				$notify_message .= __( 'You can see all pingbacks on this post here:' ) . "\r\n";
-				/* translators: 1: blog name, 2: post title */
+				/* translators: Pingback notification email subject. 1: Site title, 2: Post title */
 				$subject = sprintf( __( '[%1$s] Pingback: "%2$s"' ), $blogname, $post->post_title );
 				break;
 			default: // Comments
@@ -1563,7 +1568,7 @@ if ( ! function_exists( 'wp_notify_postauthor' ) ) :
 				/* translators: %s: comment text */
 				$notify_message .= sprintf( __( 'Comment: %s' ), "\r\n" . $comment_content ) . "\r\n\r\n";
 				$notify_message .= __( 'You can see all comments on this post here:' ) . "\r\n";
-				/* translators: 1: blog name, 2: post title */
+				/* translators: Comment notification email subject. 1: Site title, 2: Post title */
 				$subject = sprintf( __( '[%1$s] Comment: "%2$s"' ), $blogname, $post->post_title );
 				break;
 		}
@@ -1918,7 +1923,7 @@ if ( ! function_exists( 'wp_new_user_notification' ) ) :
 
 			$wp_new_user_notification_email_admin = array(
 				'to'      => get_option( 'admin_email' ),
-				/* translators: Password change notification email subject. %s: Site title */
+				/* translators: New user registration notification email subject. %s: Site title */
 				'subject' => __( '[%s] New User Registration' ),
 				'message' => $message,
 				'headers' => '',
@@ -1929,7 +1934,7 @@ if ( ! function_exists( 'wp_new_user_notification' ) ) :
 			 *
 			 * @since 4.9.0
 			 *
-			 * @param array   $wp_new_user_notification_email {
+			 * @param array   $wp_new_user_notification_email_admin {
 			 *     Used to build wp_mail().
 			 *
 			 *     @type string $to      The intended recipient - site admin email address.
@@ -1984,8 +1989,8 @@ if ( ! function_exists( 'wp_new_user_notification' ) ) :
 
 		$wp_new_user_notification_email = array(
 			'to'      => $user->user_email,
-			/* translators: Password change notification email subject. %s: Site title */
-			'subject' => __( '[%s] Your username and password info' ),
+			/* translators: Login details notification email subject. %s: Site title */
+			'subject' => __( '[%s] Login Details' ),
 			'message' => $message,
 			'headers' => '',
 		);
@@ -2023,7 +2028,7 @@ endif;
 
 if ( ! function_exists( 'wp_nonce_tick' ) ) :
 	/**
-	 * Get the time-dependent variable for nonce creation.
+	 * Returns the time-dependent variable for nonce creation.
 	 *
 	 * A nonce has a lifespan of two ticks. Nonces in their second tick may be
 	 * updated, e.g. by autosave.
@@ -2048,14 +2053,13 @@ endif;
 
 if ( ! function_exists( 'wp_verify_nonce' ) ) :
 	/**
-	 * Verify that correct nonce was used with time limit.
+	 * Verifies that a correct security nonce was used with time limit.
 	 *
-	 * The user is given an amount of time to use the token, so therefore, since the
-	 * UID and $action remain the same, the independent variable is the time.
+	 * A nonce is valid for 24 hours (by default).
 	 *
 	 * @since 2.0.3
 	 *
-	 * @param string     $nonce  Nonce that was used in the form to verify
+	 * @param string     $nonce  Nonce value that was used for verification, usually via a form field.
 	 * @param string|int $action Should give context to what is taking place and be the same when nonce was created.
 	 * @return false|int False if the nonce is invalid, 1 if the nonce is valid and generated between
 	 *                   0-12 hours ago, 2 if the nonce is valid and generated between 12-24 hours ago.
@@ -2140,7 +2144,7 @@ endif;
 
 if ( ! function_exists( 'wp_salt' ) ) :
 	/**
-	 * Get salt to add to hashes.
+	 * Returns a salt to add to hashes.
 	 *
 	 * Salts are created using secret keys. Secret keys are located in two places:
 	 * in the database and in the wp-config.php file. The secret key in the database
@@ -2386,10 +2390,14 @@ if ( ! function_exists( 'wp_generate_password' ) ) :
 		 * Filters the randomly-generated password.
 		 *
 		 * @since 3.0.0
+		 * @since 5.3.0 Added the `$length`, `$special_chars`, and `$extra_special_chars` parameters.
 		 *
-		 * @param string $password The generated password.
+		 * @param string $password            The generated password.
+		 * @param int    $length              The length of password to generate.
+		 * @param bool   $special_chars       Whether to include standard special characters.
+		 * @param bool   $extra_special_chars Whether to include other special characters.
 		 */
-		return apply_filters( 'random_password', $password );
+		return apply_filters( 'random_password', $password, $length, $special_chars, $extra_special_chars );
 	}
 endif;
 

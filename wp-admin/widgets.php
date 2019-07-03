@@ -81,7 +81,7 @@ get_current_screen()->add_help_tab(
 get_current_screen()->set_help_sidebar(
 	'<p><strong>' . __( 'For more information:' ) . '</strong></p>' .
 	'<p>' . __( '<a href="https://codex.wordpress.org/Appearance_Widgets_Screen">Documentation on Widgets</a>' ) . '</p>' .
-	'<p>' . __( '<a href="https://wordpress.org/support/">Support Forums</a>' ) . '</p>'
+	'<p>' . __( '<a href="https://wordpress.org/support/">Support</a>' ) . '</p>'
 );
 
 if ( ! current_theme_supports( 'widgets' ) ) {
@@ -254,7 +254,8 @@ if ( isset( $_GET['editwidget'] ) && $_GET['editwidget'] ) {
 					$control_callback                                = $control['callback'];
 					$multi_number                                    = (int) $_GET['num'];
 					$control['params'][0]['number']                  = -1;
-					$widget_id                                       = $control['id'] = $control['id_base'] . '-' . $multi_number;
+					$control['id']                                   = $control['id_base'] . '-' . $multi_number;
+					$widget_id                                       = $control['id'];
 					$wp_registered_widget_controls[ $control['id'] ] = $control;
 					break;
 				}
@@ -498,7 +499,8 @@ foreach ( $wp_registered_sidebars as $sidebar => $registered_sidebar ) {
 </div>
 <?php
 
-$i                    = $split = 0;
+$i                    = 0;
+$split                = 0;
 $single_sidebar_class = '';
 $sidebars_count       = count( $theme_sidebars );
 

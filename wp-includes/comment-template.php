@@ -25,7 +25,8 @@ function get_comment_author( $comment_ID = 0 ) {
 	$comment = get_comment( $comment_ID );
 
 	if ( empty( $comment->comment_author ) ) {
-		if ( $comment->user_id && $user = get_userdata( $comment->user_id ) ) {
+		$user = $comment->user_id ? get_userdata( $comment->user_id ) : false;
+		if ( $user ) {
 			$author = $user->display_name;
 		} else {
 			$author = __( 'Anonymous' );
@@ -148,7 +149,8 @@ function comment_author_email( $comment_ID = 0 ) {
  * @param int|WP_Comment $comment  Optional. Comment ID or WP_Comment object. Default is the current comment.
  */
 function comment_author_email_link( $linktext = '', $before = '', $after = '', $comment = null ) {
-	if ( $link = get_comment_author_email_link( $linktext, $before, $after, $comment ) ) {
+	$link = get_comment_author_email_link( $linktext, $before, $after, $comment );
+	if ( $link ) {
 		echo $link;
 	}
 }
@@ -262,7 +264,7 @@ function comment_author_link( $comment_ID = 0 ) {
  *                                   Default current comment.
  * @return string Comment author's IP address.
  */
-function get_comment_author_IP( $comment_ID = 0 ) {
+function get_comment_author_IP( $comment_ID = 0 ) { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.FunctionNameInvalid
 	$comment = get_comment( $comment_ID );
 
 	/**
@@ -287,7 +289,7 @@ function get_comment_author_IP( $comment_ID = 0 ) {
  * @param int|WP_Comment $comment_ID Optional. WP_Comment or the ID of the comment for which to print the author's IP address.
  *                                   Default current comment.
  */
-function comment_author_IP( $comment_ID = 0 ) {
+function comment_author_IP( $comment_ID = 0 ) { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.FunctionNameInvalid
 	echo esc_html( get_comment_author_IP( $comment_ID ) );
 }
 
@@ -423,7 +425,7 @@ function comment_author_url_link( $linktext = '', $before = '', $after = '', $co
  *                                 Default empty.
  * @param int|WP_Comment $comment  Comment ID or WP_Comment object. Default current comment.
  * @param int|WP_Post    $post_id  Post ID or WP_Post object. Default current post.
- * @param bool           $echo     Optional. Whether to cho or return the output.
+ * @param bool           $echo     Optional. Whether to echo or return the output.
  *                                 Default true.
  * @return string If `$echo` is false, the class will be returned. Void otherwise.
  */
@@ -466,11 +468,13 @@ function get_comment_class( $class = '', $comment_id = null, $post_id = null ) {
 	$classes[] = ( empty( $comment->comment_type ) ) ? 'comment' : $comment->comment_type;
 
 	// Add classes for comment authors that are registered users.
-	if ( $comment->user_id > 0 && $user = get_userdata( $comment->user_id ) ) {
+	$user = $comment->user_id ? get_userdata( $comment->user_id ) : false;
+	if ( $user ) {
 		$classes[] = 'byuser';
 		$classes[] = 'comment-author-' . sanitize_html_class( $user->user_nicename, $comment->user_id );
 		// For comment authors who are the author of the post
-		if ( $post = get_post( $post_id ) ) {
+		$post = get_post( $post_id );
+		if ( $post ) {
 			if ( $comment->user_id === $post->post_author ) {
 				$classes[] = 'bypostauthor';
 			}
@@ -577,42 +581,35 @@ function comment_date( $d = '', $comment_ID = 0 ) {
 }
 
 /**
- * Retrieve the excerpt of the current comment.
+ * Retrieves the excerpt of the given comment.
  *
- * Will cut each word and only output the first 20 words with '&hellip;' at the end.
- * If the word count is less than 20, then no truncating is done and no '&hellip;'
- * will appear.
+ * Returns a maximum of 20 words with an ellipsis appended if necessary.
  *
  * @since 1.5.0
  * @since 4.4.0 Added the ability for `$comment_ID` to also accept a WP_Comment object.
  *
  * @param int|WP_Comment $comment_ID  WP_Comment or ID of the comment for which to get the excerpt.
  *                                    Default current comment.
- * @return string The maybe truncated comment with 20 words or less.
+ * @return string The possibly truncated comment excerpt.
  */
 function get_comment_excerpt( $comment_ID = 0 ) {
 	$comment      = get_comment( $comment_ID );
 	$comment_text = strip_tags( str_replace( array( "\n", "\r" ), ' ', $comment->comment_content ) );
-	$words        = explode( ' ', $comment_text );
+
+	/* translators: Maximum number of words used in a comment excerpt. */
+	$comment_excerpt_length = intval( _x( '20', 'comment_excerpt_length' ) );
 
 	/**
-	 * Filters the amount of words used in the comment excerpt.
+	 * Filters the maximum number of words used in the comment excerpt.
 	 *
 	 * @since 4.4.0
 	 *
 	 * @param int $comment_excerpt_length The amount of words you want to display in the comment excerpt.
 	 */
-	$comment_excerpt_length = apply_filters( 'comment_excerpt_length', 20 );
+	$comment_excerpt_length = apply_filters( 'comment_excerpt_length', $comment_excerpt_length );
 
-	$use_ellipsis = count( $words ) > $comment_excerpt_length;
-	if ( $use_ellipsis ) {
-		$words = array_slice( $words, 0, $comment_excerpt_length );
-	}
+	$excerpt = wp_trim_words( $comment_text, $comment_excerpt_length, '&hellip;' );
 
-	$excerpt = trim( join( ' ', $words ) );
-	if ( $use_ellipsis ) {
-		$excerpt .= '&hellip;';
-	}
 	/**
 	 * Filters the retrieved comment excerpt.
 	 *
@@ -658,7 +655,7 @@ function comment_excerpt( $comment_ID = 0 ) {
  *
  * @return int The comment ID.
  */
-function get_comment_ID() {
+function get_comment_ID() { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.FunctionNameInvalid
 	$comment = get_comment();
 
 	/**
@@ -678,7 +675,7 @@ function get_comment_ID() {
  *
  * @since 0.71
  */
-function comment_ID() {
+function comment_ID() { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.FunctionNameInvalid
 	echo get_comment_ID();
 }
 
@@ -1996,8 +1993,9 @@ function wp_list_comments( $args = array(), $comments = null ) {
 
 	$in_comment_loop = true;
 
-	$comment_alt   = $comment_thread_alt = 0;
-	$comment_depth = 1;
+	$comment_alt        = 0;
+	$comment_thread_alt = 0;
+	$comment_depth      = 1;
 
 	$defaults = array(
 		'walker'            => null,

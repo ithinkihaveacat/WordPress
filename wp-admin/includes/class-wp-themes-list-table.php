@@ -208,15 +208,16 @@ class WP_Themes_List_Table extends WP_List_Table {
 			$delete_action = isset( $actions['delete'] ) ? '<div class="delete-theme">' . $actions['delete'] . '</div>' : '';
 			unset( $actions['delete'] );
 
+			$screenshot = $theme->get_screenshot();
 			?>
 
 			<span class="screenshot hide-if-customize">
-				<?php if ( $screenshot = $theme->get_screenshot() ) : ?>
+				<?php if ( $screenshot ) : ?>
 					<img src="<?php echo esc_url( $screenshot ); ?>" alt="" />
 				<?php endif; ?>
 			</span>
 			<a href="<?php echo wp_customize_url( $stylesheet ); ?>" class="screenshot load-customize hide-if-no-customize">
-				<?php if ( $screenshot = $theme->get_screenshot() ) : ?>
+				<?php if ( $screenshot ) : ?>
 					<img src="<?php echo esc_url( $screenshot ); ?>" alt="" />
 				<?php endif; ?>
 			</a>
@@ -241,8 +242,9 @@ class WP_Themes_List_Table extends WP_List_Table {
 				<?php
 				if ( $theme->parent() ) {
 					printf(
+						/* translators: %s: link to documentation on child themes */
 						' <p class="howto">' . __( 'This <a href="%1$s">child theme</a> requires its parent theme, %2$s.' ) . '</p>',
-						__( 'https://codex.wordpress.org/Child_Themes' ),
+						__( 'https://developer.wordpress.org/themes/advanced-topics/child-themes/' ),
 						$theme->parent()->display( 'Name' )
 					);
 				}

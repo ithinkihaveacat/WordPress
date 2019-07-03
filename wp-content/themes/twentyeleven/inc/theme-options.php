@@ -119,7 +119,7 @@ function twentyeleven_theme_options_help() {
 
 	$sidebar = '<p><strong>' . __( 'For more information:', 'twentyeleven' ) . '</strong></p>' .
 		'<p>' . __( '<a href="https://codex.wordpress.org/Appearance_Theme_Options_Screen" target="_blank">Documentation on Theme Options</a>', 'twentyeleven' ) . '</p>' .
-		'<p>' . __( '<a href="https://wordpress.org/support/" target="_blank">Support Forums</a>', 'twentyeleven' ) . '</p>';
+		'<p>' . __( '<a href="https://wordpress.org/support/" target="_blank">Support</a>', 'twentyeleven' ) . '</p>';
 
 	$screen = get_current_screen();
 
@@ -365,7 +365,8 @@ function twentyeleven_theme_options_render_page() {
  * @param array $input An array of form input.
  */
 function twentyeleven_theme_options_validate( $input ) {
-	$output = $defaults = twentyeleven_get_default_theme_options();
+	$defaults = twentyeleven_get_default_theme_options();
+	$output   = $defaults;
 
 	// Color scheme must be in our array of color scheme options
 	if ( isset( $input['color_scheme'] ) && array_key_exists( $input['color_scheme'], twentyeleven_color_schemes() ) ) {
@@ -373,7 +374,8 @@ function twentyeleven_theme_options_validate( $input ) {
 	}
 
 	// Our defaults for the link color may have changed, based on the color scheme.
-	$output['link_color'] = $defaults['link_color'] = twentyeleven_get_default_link_color( $output['color_scheme'] );
+	$defaults['link_color'] = twentyeleven_get_default_link_color( $output['color_scheme'] );
+	$output['link_color']   = $defaults['link_color'];
 
 	// Link color must be 3 or 6 hexadecimal characters
 	if ( isset( $input['link_color'] ) && preg_match( '/^#?([a-f0-9]{3}){1,2}$/i', $input['link_color'] ) ) {

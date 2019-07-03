@@ -79,7 +79,7 @@ function export_wp( $args = array() ) {
 	if ( ! empty( $sitename ) ) {
 		$sitename .= '.';
 	}
-	$date        = date( 'Y-m-d' );
+	$date        = gmdate( 'Y-m-d' );
 	$wp_filename = $sitename . 'WordPress.' . $date . '.xml';
 	/**
 	 * Filters the export filename.
@@ -117,7 +117,8 @@ function export_wp( $args = array() ) {
 
 	$join = '';
 	if ( $args['category'] && 'post' == $args['content'] ) {
-		if ( $term = term_exists( $args['category'], 'category' ) ) {
+		$term = term_exists( $args['category'], 'category' );
+		if ( $term ) {
 			$join   = "INNER JOIN {$wpdb->term_relationships} ON ({$wpdb->posts}.ID = {$wpdb->term_relationships}.object_id)";
 			$where .= $wpdb->prepare( " AND {$wpdb->term_relationships}.term_taxonomy_id = %d", $term['term_taxonomy_id'] );
 		}
@@ -129,11 +130,11 @@ function export_wp( $args = array() ) {
 		}
 
 		if ( $args['start_date'] ) {
-			$where .= $wpdb->prepare( " AND {$wpdb->posts}.post_date >= %s", date( 'Y-m-d', strtotime( $args['start_date'] ) ) );
+			$where .= $wpdb->prepare( " AND {$wpdb->posts}.post_date >= %s", gmdate( 'Y-m-d', strtotime( $args['start_date'] ) ) );
 		}
 
 		if ( $args['end_date'] ) {
-			$where .= $wpdb->prepare( " AND {$wpdb->posts}.post_date < %s", date( 'Y-m-d', strtotime( '+1 month', strtotime( $args['end_date'] ) ) ) );
+			$where .= $wpdb->prepare( " AND {$wpdb->posts}.post_date < %s", gmdate( 'Y-m-d', strtotime( '+1 month', strtotime( $args['end_date'] ) ) ) );
 		}
 	}
 
@@ -144,7 +145,9 @@ function export_wp( $args = array() ) {
 	 * Get the requested terms ready, empty unless posts filtered by category
 	 * or all content.
 	 */
-	$cats = $tags = $terms = array();
+	$cats  = array();
+	$tags  = array();
+	$terms = array();
 	if ( isset( $term ) && $term ) {
 		$cat  = get_term( $term['term_id'], 'category' );
 		$cats = array( $cat->term_id => $cat );
@@ -458,7 +461,7 @@ function export_wp( $args = array() ) {
 	<title><?php bloginfo_rss( 'name' ); ?></title>
 	<link><?php bloginfo_rss( 'url' ); ?></link>
 	<description><?php bloginfo_rss( 'description' ); ?></description>
-	<pubDate><?php echo date( 'D, d M Y H:i:s +0000' ); ?></pubDate>
+	<pubDate><?php echo gmdate( 'D, d M Y H:i:s +0000' ); ?></pubDate>
 	<language><?php bloginfo_rss( 'language' ); ?></language>
 	<wp:wxr_version><?php echo WXR_VERSION; ?></wp:wxr_version>
 	<wp:base_site_url><?php echo wxr_site_url(); ?></wp:base_site_url>
@@ -530,22 +533,10 @@ function export_wp( $args = array() ) {
 			// Begin Loop.
 			foreach ( $posts as $post ) {
 				setup_postdata( $post );
-				$is_sticky = is_sticky( $post->ID ) ? 1 : 0;
-				?>
-	<item>
-		<title>
-				<?php
+
 				/** This filter is documented in wp-includes/feed.php */
-				echo apply_filters( 'the_title_rss', $post->post_title );
-				?>
-		</title>
-		<link><?php the_permalink_rss(); ?></link>
-		<pubDate><?php echo mysql2date( 'D, d M Y H:i:s +0000', get_post_time( 'Y-m-d H:i:s', true ), false ); ?></pubDate>
-		<dc:creator><?php echo wxr_cdata( get_the_author_meta( 'login' ) ); ?></dc:creator>
-		<guid isPermaLink="false"><?php the_guid(); ?></guid>
-		<description></description>
-		<content:encoded>
-				<?php
+				$title = apply_filters( 'the_title_rss', $post->post_title );
+
 				/**
 				 * Filters the post content used for WXR exports.
 				 *
@@ -553,11 +544,8 @@ function export_wp( $args = array() ) {
 				 *
 				 * @param string $post_content Content of the current post.
 				 */
-				echo wxr_cdata( apply_filters( 'the_content_export', $post->post_content ) );
-				?>
-		</content:encoded>
-		<excerpt:encoded>
-				<?php
+				$content = wxr_cdata( apply_filters( 'the_content_export', $post->post_content ) );
+
 				/**
 				 * Filters the post excerpt used for WXR exports.
 				 *
@@ -565,9 +553,19 @@ function export_wp( $args = array() ) {
 				 *
 				 * @param string $post_excerpt Excerpt for the current post.
 				 */
-				echo wxr_cdata( apply_filters( 'the_excerpt_export', $post->post_excerpt ) );
+				$excerpt = wxr_cdata( apply_filters( 'the_excerpt_export', $post->post_excerpt ) );
+
+				$is_sticky = is_sticky( $post->ID ) ? 1 : 0;
 				?>
-		</excerpt:encoded>
+	<item>
+		<title><?php echo $title; ?></title>
+		<link><?php the_permalink_rss(); ?></link>
+		<pubDate><?php echo mysql2date( 'D, d M Y H:i:s +0000', get_post_time( 'Y-m-d H:i:s', true ), false ); ?></pubDate>
+		<dc:creator><?php echo wxr_cdata( get_the_author_meta( 'login' ) ); ?></dc:creator>
+		<guid isPermaLink="false"><?php the_guid(); ?></guid>
+		<description></description>
+		<content:encoded><?php echo $content; ?></content:encoded>
+		<excerpt:encoded><?php echo $excerpt; ?></excerpt:encoded>
 		<wp:post_id><?php echo intval( $post->ID ); ?></wp:post_id>
 		<wp:post_date><?php echo wxr_cdata( $post->post_date ); ?></wp:post_date>
 		<wp:post_date_gmt><?php echo wxr_cdata( $post->post_date_gmt ); ?></wp:post_date_gmt>

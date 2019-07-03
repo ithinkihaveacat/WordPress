@@ -1173,7 +1173,9 @@ function wp_kses_attr_check( &$name, &$value, &$whole, $vless, $element, $allowe
 			 */
 			$allowed_attr[ $match[0] ] = $allowed_attr['data-*'];
 		} else {
-			$name = $value = $whole = '';
+			$name  = '';
+			$value = '';
+			$whole = '';
 			return false;
 		}
 	}
@@ -1182,7 +1184,9 @@ function wp_kses_attr_check( &$name, &$value, &$whole, $vless, $element, $allowe
 		$new_value = safecss_filter_attr( $value );
 
 		if ( empty( $new_value ) ) {
-			$name = $value = $whole = '';
+			$name  = '';
+			$value = '';
+			$whole = '';
 			return false;
 		}
 
@@ -1194,7 +1198,9 @@ function wp_kses_attr_check( &$name, &$value, &$whole, $vless, $element, $allowe
 		// there are some checks
 		foreach ( $allowed_attr[ $name_low ] as $currkey => $currval ) {
 			if ( ! wp_kses_check_attr_val( $value, $vless, $currkey, $currval ) ) {
-				$name = $value = $whole = '';
+				$name  = '';
+				$value = '';
+				$whole = '';
 				return false;
 			}
 		}
@@ -1235,7 +1241,8 @@ function wp_kses_hair( $attr, $allowed_protocols ) {
 			case 0:
 				if ( preg_match( '/^([-a-zA-Z:]+)/', $attr, $match ) ) {
 					$attrname = $match[1];
-					$working  = $mode = 1;
+					$working  = 1;
+					$mode     = 1;
 					$attr     = preg_replace( '/^[-a-zA-Z:]+/', '', $attr );
 				}
 
@@ -2062,6 +2069,8 @@ function safecss_filter_attr( $css, $deprecated = '' ) {
 	 * @since 4.6.0 Added support for `list-style-type`.
 	 * @since 5.0.0 Added support for `background-image`.
 	 * @since 5.1.0 Added support for `text-transform`.
+	 * @since 5.2.0 Added support for `background-position` and `grid-template-columns`
+	 * @since 5.3.0 Added support for `flex`, `flex-grow`, `flex-shrink`, and `flex-basis`.
 	 *
 	 * @param string[] $attr Array of allowed CSS attributes.
 	 */
@@ -2071,6 +2080,7 @@ function safecss_filter_attr( $css, $deprecated = '' ) {
 			'background',
 			'background-color',
 			'background-image',
+			'background-position',
 
 			'border',
 			'border-width',
@@ -2131,6 +2141,11 @@ function safecss_filter_attr( $css, $deprecated = '' ) {
 			'padding-left',
 			'padding-top',
 
+			'flex',
+			'flex-grow',
+			'flex-shrink',
+			'flex-basis',
+
 			'clear',
 			'cursor',
 			'direction',
@@ -2138,6 +2153,7 @@ function safecss_filter_attr( $css, $deprecated = '' ) {
 			'overflow',
 			'vertical-align',
 			'list-style-type',
+			'grid-template-columns',
 		)
 	);
 

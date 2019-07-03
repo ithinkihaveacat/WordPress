@@ -113,7 +113,7 @@ class wpdb {
 	 * Last query made
 	 *
 	 * @since 0.71
-	 * @var array
+	 * @var string
 	 */
 	var $last_query;
 
@@ -1128,7 +1128,7 @@ class wpdb {
 				$message .= '<p>' . sprintf(
 					/* translators: %s: support forums URL */
 					__( 'If you don&#8217;t know how to set up a database you should <strong>contact your host</strong>. If all else fails you may find help at the <a href="%s">WordPress Support Forums</a>.' ),
-					__( 'https://wordpress.org/support/' )
+					__( 'https://wordpress.org/support/forums/' )
 				) . "</p>\n";
 
 				$this->bail( $message, 'db_select_fail' );
@@ -1286,10 +1286,10 @@ class wpdb {
 	 * @link https://secure.php.net/sprintf Description of syntax.
 	 * @since 2.3.0
 	 *
-	 * @param string      $query    Query statement with sprintf()-like placeholders
-	 * @param array|mixed $args     The array of variables to substitute into the query's placeholders if being called with an array of arguments,
-	 *                              or the first variable to substitute into the query's placeholders if being called with individual arguments.
-	 * @param mixed       $args,... further variables to substitute into the query's placeholders if being called wih individual arguments.
+	 * @param string      $query   Query statement with sprintf()-like placeholders
+	 * @param array|mixed $args    The array of variables to substitute into the query's placeholders if being called with an array of arguments,
+	 *                             or the first variable to substitute into the query's placeholders if being called with individual arguments.
+	 * @param mixed       ...$args further variables to substitute into the query's placeholders if being called wih individual arguments.
 	 * @return string|void Sanitized query string, if there is a query to prepare.
 	 */
 	public function prepare( $query, $args ) {
@@ -1335,7 +1335,7 @@ class wpdb {
 		 * If a %s placeholder already has quotes around it, removing the existing quotes and re-inserting them
 		 * ensures the quotes are consistent.
 		 *
-		 * For backwards compatibility, this is only applied to %s, and not to placeholders like %1$s, which are frequently
+		 * For backward compatibility, this is only applied to %s, and not to placeholders like %1$s, which are frequently
 		 * used in the middle of longer strings, or as table name placeholders.
 		 */
 		$query = str_replace( "'%s'", '%s', $query ); // Strip any existing single quotes.
@@ -1438,7 +1438,8 @@ class wpdb {
 
 		wp_load_translations_early();
 
-		if ( $caller = $this->get_caller() ) {
+		$caller = $this->get_caller();
+		if ( $caller ) {
 			/* translators: 1: Database error message, 2: SQL query, 3: Name of the calling function */
 			$error_str = sprintf( __( 'WordPress database error %1$s for query %2$s made by %3$s' ), $str, $this->last_query, $caller );
 		} else {
@@ -1543,7 +1544,8 @@ class wpdb {
 		$this->last_result   = array();
 		$this->col_info      = null;
 		$this->last_query    = null;
-		$this->rows_affected = $this->num_rows = 0;
+		$this->rows_affected = 0;
+		$this->num_rows      = 0;
 		$this->last_error    = '';
 
 		if ( $this->use_mysqli && $this->result instanceof mysqli_result ) {
@@ -1594,7 +1596,8 @@ class wpdb {
 			$socket  = null;
 			$is_ipv6 = false;
 
-			if ( $host_data = $this->parse_db_host( $this->dbhost ) ) {
+			$host_data = $this->parse_db_host( $this->dbhost );
+			if ( $host_data ) {
 				list( $host, $port, $socket, $is_ipv6 ) = $host_data;
 			}
 
@@ -1673,7 +1676,7 @@ class wpdb {
 			$message .= '<p>' . sprintf(
 				/* translators: %s: support forums URL */
 				__( 'If you&#8217;re unsure what these terms mean you should probably contact your host. If you still need help you can always visit the <a href="%s">WordPress Support Forums</a>.' ),
-				__( 'https://wordpress.org/support/' )
+				__( 'https://wordpress.org/support/forums/' )
 			) . "</p>\n";
 
 			$this->bail( $message, 'db_connect_fail' );
@@ -1831,7 +1834,7 @@ class wpdb {
 		$message .= '<p>' . sprintf(
 			/* translators: %s: support forums URL */
 			__( 'If you&#8217;re unsure what these terms mean you should probably contact your host. If you still need help you can always visit the <a href="%s">WordPress Support Forums</a>.' ),
-			__( 'https://wordpress.org/support/' )
+			__( 'https://wordpress.org/support/forums/' )
 		) . "</p>\n";
 
 		// We weren't able to reconnect, so we better bail.
@@ -2041,7 +2044,7 @@ class wpdb {
 
 		/*
 		 * Add the filter to remove the placeholder escaper. Uses priority 0, so that anything
-		 * else attached to this filter will recieve the query with the placeholder string removed.
+		 * else attached to this filter will receive the query with the placeholder string removed.
 		 */
 		if ( ! has_filter( 'query', array( $this, 'remove_placeholder_escape' ) ) ) {
 			add_filter( 'query', array( $this, 'remove_placeholder_escape' ), 0 );
@@ -2161,7 +2164,8 @@ class wpdb {
 			return false;
 		}
 
-		$formats = $values = array();
+		$formats = array();
+		$values  = array();
 		foreach ( $data as $value ) {
 			if ( is_null( $value['value'] ) ) {
 				$formats[] = 'NULL';
@@ -2225,7 +2229,9 @@ class wpdb {
 			return false;
 		}
 
-		$fields = $conditions = $values = array();
+		$fields     = array();
+		$conditions = array();
+		$values     = array();
 		foreach ( $data as $field => $value ) {
 			if ( is_null( $value['value'] ) ) {
 				$fields[] = "`$field` = NULL";
@@ -2286,7 +2292,8 @@ class wpdb {
 			return false;
 		}
 
-		$conditions = $values = array();
+		$conditions = array();
+		$values     = array();
 		foreach ( $where as $field => $value ) {
 			if ( is_null( $value['value'] ) ) {
 				$conditions[] = "`$field` IS NULL";
@@ -2358,7 +2365,8 @@ class wpdb {
 	 *               of 'value' and 'format' keys.
 	 */
 	protected function process_field_formats( $data, $format ) {
-		$formats = $original_formats = (array) $format;
+		$formats          = (array) $format;
+		$original_formats = $formats;
 
 		foreach ( $data as $field => $value ) {
 			$value = array(
@@ -2650,7 +2658,8 @@ class wpdb {
 			return $this->table_charset[ $tablekey ];
 		}
 
-		$charsets = $columns = array();
+		$charsets = array();
+		$columns  = array();
 
 		$table_parts = explode( '.', $table );
 		$table       = '`' . implode( '`.`', $table_parts ) . '`';
@@ -3048,7 +3057,8 @@ class wpdb {
 			}
 
 			// We couldn't use any local conversions, send it to the DB.
-			$value['db'] = $db_check_string = true;
+			$value['db']     = true;
+			$db_check_string = true;
 		}
 		unset( $value ); // Remove by reference.
 

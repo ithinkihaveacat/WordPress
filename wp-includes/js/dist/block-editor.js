@@ -82,7 +82,7 @@ this["wp"] = this["wp"] || {}; this["wp"]["blockEditor"] =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 357);
+/******/ 	return __webpack_require__(__webpack_require__.s = 343);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -1319,7 +1319,7 @@ function _inherits(subClass, superClass) {
 
 /***/ }),
 
-/***/ 135:
+/***/ 137:
 /***/ (function(module, exports) {
 
 (function() { module.exports = this["wp"]["tokenList"]; }());
@@ -1492,7 +1492,7 @@ function _extends() {
 
 /***/ }),
 
-/***/ 207:
+/***/ 201:
 /***/ (function(module, exports, __webpack_require__) {
 
 /*!
@@ -3380,31 +3380,31 @@ function _objectWithoutProperties(source, excluded) {
 /***/ }),
 
 /***/ 23:
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-(function() { module.exports = this["wp"]["url"]; }());
+module.exports = __webpack_require__(54);
+
 
 /***/ }),
 
 /***/ 24:
 /***/ (function(module, exports) {
 
-(function() { module.exports = this["wp"]["hooks"]; }());
+(function() { module.exports = this["wp"]["dom"]; }());
 
 /***/ }),
 
 /***/ 25:
 /***/ (function(module, exports) {
 
-(function() { module.exports = this["wp"]["dom"]; }());
+(function() { module.exports = this["wp"]["url"]; }());
 
 /***/ }),
 
 /***/ 26:
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-module.exports = __webpack_require__(54);
-
+(function() { module.exports = this["wp"]["hooks"]; }());
 
 /***/ }),
 
@@ -3770,10 +3770,10 @@ function isShallowEqual( a, b, fromIndex ) {
  * LICENSE file in the root directory of this source tree.
  */
 
-if (false) { var throwOnDirectAccess, isValidElement, REACT_ELEMENT_TYPE; } else {
+if (false) { var throwOnDirectAccess, ReactIs; } else {
   // By explicitly using `prop-types` you are opting into new production behavior.
   // http://fb.me/prop-types-in-prod
-  module.exports = __webpack_require__(89)();
+  module.exports = __webpack_require__(88)();
 }
 
 
@@ -3820,14 +3820,7 @@ function _iterableToArray(iter) {
 
 /***/ }),
 
-/***/ 35:
-/***/ (function(module, exports) {
-
-(function() { module.exports = this["wp"]["blob"]; }());
-
-/***/ }),
-
-/***/ 357:
+/***/ 343:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3860,13 +3853,14 @@ __webpack_require__.d(actions_namespaceObject, "synchronizeTemplate", function()
 __webpack_require__.d(actions_namespaceObject, "mergeBlocks", function() { return mergeBlocks; });
 __webpack_require__.d(actions_namespaceObject, "removeBlocks", function() { return actions_removeBlocks; });
 __webpack_require__.d(actions_namespaceObject, "removeBlock", function() { return removeBlock; });
+__webpack_require__.d(actions_namespaceObject, "replaceInnerBlocks", function() { return actions_replaceInnerBlocks; });
 __webpack_require__.d(actions_namespaceObject, "toggleBlockMode", function() { return toggleBlockMode; });
 __webpack_require__.d(actions_namespaceObject, "startTyping", function() { return startTyping; });
 __webpack_require__.d(actions_namespaceObject, "stopTyping", function() { return stopTyping; });
 __webpack_require__.d(actions_namespaceObject, "enterFormattedText", function() { return enterFormattedText; });
 __webpack_require__.d(actions_namespaceObject, "exitFormattedText", function() { return exitFormattedText; });
 __webpack_require__.d(actions_namespaceObject, "insertDefaultBlock", function() { return actions_insertDefaultBlock; });
-__webpack_require__.d(actions_namespaceObject, "updateBlockListSettings", function() { return actions_updateBlockListSettings; });
+__webpack_require__.d(actions_namespaceObject, "updateBlockListSettings", function() { return updateBlockListSettings; });
 __webpack_require__.d(actions_namespaceObject, "updateSettings", function() { return updateSettings; });
 __webpack_require__.d(actions_namespaceObject, "__unstableSaveReusableBlock", function() { return __unstableSaveReusableBlock; });
 __webpack_require__.d(actions_namespaceObject, "__unstableMarkLastChangeAsPersistent", function() { return __unstableMarkLastChangeAsPersistent; });
@@ -3931,6 +3925,7 @@ __webpack_require__.d(selectors_namespaceObject, "hasInserterItems", function() 
 __webpack_require__.d(selectors_namespaceObject, "getBlockListSettings", function() { return getBlockListSettings; });
 __webpack_require__.d(selectors_namespaceObject, "getSettings", function() { return selectors_getSettings; });
 __webpack_require__.d(selectors_namespaceObject, "isLastBlockChangePersistent", function() { return isLastBlockChangePersistent; });
+__webpack_require__.d(selectors_namespaceObject, "__unstableIsLastBlockChangeIgnored", function() { return __unstableIsLastBlockChangeIgnored; });
 
 // EXTERNAL MODULE: external {"this":["wp","blocks"]}
 var external_this_wp_blocks_ = __webpack_require__(14);
@@ -4315,32 +4310,20 @@ function isUpdatingSameBlockAttribute(action, lastAction) {
 
 function withPersistentBlockChange(reducer) {
   var lastAction;
-  /**
-   * Set of action types for which a blocks state change should be considered
-   * non-persistent.
-   *
-   * @type {Set}
-   */
-
-  var IGNORED_ACTION_TYPES = new Set(['RECEIVE_BLOCKS']);
   return function (state, action) {
     var nextState = reducer(state, action);
     var isExplicitPersistentChange = action.type === 'MARK_LAST_CHANGE_AS_PERSISTENT'; // Defer to previous state value (or default) unless changing or
     // explicitly marking as persistent.
 
     if (state === nextState && !isExplicitPersistentChange) {
+      var nextIsPersistentChange = Object(external_lodash_["get"])(state, ['isPersistentChange'], true);
+
+      if (state.isPersistentChange === nextIsPersistentChange) {
+        return state;
+      }
+
       return Object(objectSpread["a" /* default */])({}, nextState, {
-        isPersistentChange: Object(external_lodash_["get"])(state, ['isPersistentChange'], true)
-      });
-    } // Some state changes should not be considered persistent, namely those
-    // which are not a direct result of user interaction.
-
-
-    var isIgnoredActionType = IGNORED_ACTION_TYPES.has(action.type);
-
-    if (isIgnoredActionType) {
-      return Object(objectSpread["a" /* default */])({}, nextState, {
-        isPersistentChange: false
+        isPersistentChange: nextIsPersistentChange
       });
     }
 
@@ -4351,6 +4334,35 @@ function withPersistentBlockChange(reducer) {
     // have resulted in a changed state.
 
     lastAction = action;
+    return nextState;
+  };
+}
+/**
+ * Higher-order reducer intended to augment the blocks reducer, assigning an
+ * `isIgnoredChange` property value corresponding to whether a change in state
+ * can be considered as ignored. A change is considered ignored when the result
+ * of an action not incurred by direct user interaction.
+ *
+ * @param {Function} reducer Original reducer function.
+ *
+ * @return {Function} Enhanced reducer function.
+ */
+
+
+function withIgnoredBlockChange(reducer) {
+  /**
+   * Set of action types for which a blocks state change should be ignored.
+   *
+   * @type {Set}
+   */
+  var IGNORED_ACTION_TYPES = new Set(['RECEIVE_BLOCKS']);
+  return function (state, action) {
+    var nextState = reducer(state, action);
+
+    if (nextState !== state) {
+      nextState.isIgnoredChange = IGNORED_ACTION_TYPES.has(action.type);
+    }
+
     return nextState;
   };
 }
@@ -4411,6 +4423,45 @@ var reducer_withBlockReset = function withBlockReset(reducer) {
 };
 /**
  * Higher-order reducer which targets the combined blocks reducer and handles
+ * the `REPLACE_INNER_BLOCKS` action. When dispatched, this action the state should become equivalent
+ * to the execution of a `REMOVE_BLOCKS` action containing all the child's of the root block followed by
+ * the execution of `INSERT_BLOCKS` with the new blocks.
+ *
+ * @param {Function} reducer Original reducer function.
+ *
+ * @return {Function} Enhanced reducer function.
+ */
+
+
+var reducer_withReplaceInnerBlocks = function withReplaceInnerBlocks(reducer) {
+  return function (state, action) {
+    if (action.type !== 'REPLACE_INNER_BLOCKS') {
+      return reducer(state, action);
+    }
+
+    var stateAfterBlocksRemoval = state;
+
+    if (state.order[action.rootClientId]) {
+      stateAfterBlocksRemoval = reducer(stateAfterBlocksRemoval, {
+        type: 'REMOVE_BLOCKS',
+        clientIds: state.order[action.rootClientId]
+      });
+    }
+
+    var stateAfterInsert = stateAfterBlocksRemoval;
+
+    if (action.blocks.length) {
+      stateAfterInsert = reducer(stateAfterInsert, Object(objectSpread["a" /* default */])({}, action, {
+        type: 'INSERT_BLOCKS',
+        index: 0
+      }));
+    }
+
+    return stateAfterInsert;
+  };
+};
+/**
+ * Higher-order reducer which targets the combined blocks reducer and handles
  * the `SAVE_REUSABLE_BLOCK_SUCCESS` action. This action can't be handled by
  * regular reducers and needs a higher-order reducer since it needs access to
  * both `byClientId` and `attributes` simultaneously.
@@ -4458,7 +4509,8 @@ var reducer_withSaveReusableBlock = function withSaveReusableBlock(reducer) {
  */
 
 
-var reducer_blocks = Object(external_lodash_["flow"])(external_this_wp_data_["combineReducers"], reducer_withInnerBlocksRemoveCascade, reducer_withBlockReset, reducer_withSaveReusableBlock, withPersistentBlockChange)({
+var reducer_blocks = Object(external_lodash_["flow"])(external_this_wp_data_["combineReducers"], reducer_withInnerBlocksRemoveCascade, reducer_withReplaceInnerBlocks, // needs to be after withInnerBlocksRemoveCascade
+reducer_withBlockReset, reducer_withSaveReusableBlock, withPersistentBlockChange, withIgnoredBlockChange)({
   byClientId: function byClientId() {
     var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     var action = arguments.length > 1 ? arguments[1] : undefined;
@@ -4808,6 +4860,8 @@ function blockSelection() {
         initialPosition: action.initialPosition
       });
 
+    case 'REPLACE_INNER_BLOCKS': // REPLACE_INNER_BLOCKS and INSERT_BLOCKS should follow the same logic.
+
     case 'INSERT_BLOCKS':
       {
         if (action.updateSelection) {
@@ -5050,7 +5104,7 @@ var refx = __webpack_require__(70);
 var refx_default = /*#__PURE__*/__webpack_require__.n(refx);
 
 // EXTERNAL MODULE: ./node_modules/redux-multi/lib/index.js
-var lib = __webpack_require__(97);
+var lib = __webpack_require__(96);
 var lib_default = /*#__PURE__*/__webpack_require__.n(lib);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/slicedToArray.js + 1 modules
@@ -5060,7 +5114,7 @@ var slicedToArray = __webpack_require__(28);
 var external_this_wp_a11y_ = __webpack_require__(48);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/regenerator/index.js
-var regenerator = __webpack_require__(26);
+var regenerator = __webpack_require__(23);
 var regenerator_default = /*#__PURE__*/__webpack_require__.n(regenerator);
 
 // CONCATENATED MODULE: ./node_modules/@wordpress/block-editor/build-module/store/controls.js
@@ -5111,11 +5165,23 @@ var controls_controls = {
 
 var _marked =
 /*#__PURE__*/
-regenerator_default.a.mark(selectPreviousBlock),
+regenerator_default.a.mark(ensureDefaultBlock),
     _marked2 =
 /*#__PURE__*/
-regenerator_default.a.mark(selectNextBlock),
+regenerator_default.a.mark(selectPreviousBlock),
     _marked3 =
+/*#__PURE__*/
+regenerator_default.a.mark(selectNextBlock),
+    _marked4 =
+/*#__PURE__*/
+regenerator_default.a.mark(actions_replaceBlocks),
+    _marked5 =
+/*#__PURE__*/
+regenerator_default.a.mark(moveBlockToPosition),
+    _marked6 =
+/*#__PURE__*/
+regenerator_default.a.mark(actions_insertBlocks),
+    _marked7 =
 /*#__PURE__*/
 regenerator_default.a.mark(actions_removeBlocks);
 
@@ -5134,6 +5200,40 @@ regenerator_default.a.mark(actions_removeBlocks);
 
 
 /**
+ * Generator which will yield a default block insert action if there
+ * are no other blocks at the root of the editor. This generator should be used
+ * in actions which may result in no blocks remaining in the editor (removal,
+ * replacement, etc).
+ */
+
+function ensureDefaultBlock() {
+  var count;
+  return regenerator_default.a.wrap(function ensureDefaultBlock$(_context) {
+    while (1) {
+      switch (_context.prev = _context.next) {
+        case 0:
+          _context.next = 2;
+          return controls_select('core/block-editor', 'getBlockCount');
+
+        case 2:
+          count = _context.sent;
+
+          if (!(count === 0)) {
+            _context.next = 6;
+            break;
+          }
+
+          _context.next = 6;
+          return actions_insertDefaultBlock();
+
+        case 6:
+        case "end":
+          return _context.stop();
+      }
+    }
+  }, _marked, this);
+}
+/**
  * Returns an action object used in signalling that blocks state should be
  * reset to the specified array of blocks, taking precedence over any other
  * content reflected as an edit in state.
@@ -5142,6 +5242,7 @@ regenerator_default.a.mark(actions_removeBlocks);
  *
  * @return {Object} Action object.
  */
+
 
 function resetBlocks(blocks) {
   return {
@@ -5229,24 +5330,24 @@ function actions_selectBlock(clientId) {
 
 function selectPreviousBlock(clientId) {
   var previousBlockClientId;
-  return regenerator_default.a.wrap(function selectPreviousBlock$(_context) {
+  return regenerator_default.a.wrap(function selectPreviousBlock$(_context2) {
     while (1) {
-      switch (_context.prev = _context.next) {
+      switch (_context2.prev = _context2.next) {
         case 0:
-          _context.next = 2;
+          _context2.next = 2;
           return controls_select('core/block-editor', 'getPreviousBlockClientId', clientId);
 
         case 2:
-          previousBlockClientId = _context.sent;
-          _context.next = 5;
+          previousBlockClientId = _context2.sent;
+          _context2.next = 5;
           return actions_selectBlock(previousBlockClientId, -1);
 
         case 5:
         case "end":
-          return _context.stop();
+          return _context2.stop();
       }
     }
-  }, _marked, this);
+  }, _marked2, this);
 }
 /**
  * Yields action objects used in signalling that the block following the given
@@ -5257,24 +5358,24 @@ function selectPreviousBlock(clientId) {
 
 function selectNextBlock(clientId) {
   var nextBlockClientId;
-  return regenerator_default.a.wrap(function selectNextBlock$(_context2) {
+  return regenerator_default.a.wrap(function selectNextBlock$(_context3) {
     while (1) {
-      switch (_context2.prev = _context2.next) {
+      switch (_context3.prev = _context3.next) {
         case 0:
-          _context2.next = 2;
+          _context3.next = 2;
           return controls_select('core/block-editor', 'getNextBlockClientId', clientId);
 
         case 2:
-          nextBlockClientId = _context2.sent;
-          _context2.next = 5;
+          nextBlockClientId = _context3.sent;
+          _context3.next = 5;
           return actions_selectBlock(nextBlockClientId);
 
         case 5:
         case "end":
-          return _context2.stop();
+          return _context3.stop();
       }
     }
-  }, _marked2, this);
+  }, _marked3, this);
 }
 /**
  * Returns an action object used in signalling that a block multi-selection has started.
@@ -5348,16 +5449,67 @@ function toggleSelection() {
  * @param {(string|string[])} clientIds Block client ID(s) to replace.
  * @param {(Object|Object[])} blocks    Replacement block(s).
  *
- * @return {Object} Action object.
+ * @yields {Object} Action object.
  */
 
 function actions_replaceBlocks(clientIds, blocks) {
-  return {
-    type: 'REPLACE_BLOCKS',
-    clientIds: Object(external_lodash_["castArray"])(clientIds),
-    blocks: Object(external_lodash_["castArray"])(blocks),
-    time: Date.now()
-  };
+  var rootClientId, index, block, canInsertBlock;
+  return regenerator_default.a.wrap(function replaceBlocks$(_context4) {
+    while (1) {
+      switch (_context4.prev = _context4.next) {
+        case 0:
+          clientIds = Object(external_lodash_["castArray"])(clientIds);
+          blocks = Object(external_lodash_["castArray"])(blocks);
+          _context4.next = 4;
+          return controls_select('core/block-editor', 'getBlockRootClientId', Object(external_lodash_["first"])(clientIds));
+
+        case 4:
+          rootClientId = _context4.sent;
+          index = 0;
+
+        case 6:
+          if (!(index < blocks.length)) {
+            _context4.next = 16;
+            break;
+          }
+
+          block = blocks[index];
+          _context4.next = 10;
+          return controls_select('core/block-editor', 'canInsertBlockType', block.name, rootClientId);
+
+        case 10:
+          canInsertBlock = _context4.sent;
+
+          if (canInsertBlock) {
+            _context4.next = 13;
+            break;
+          }
+
+          return _context4.abrupt("return");
+
+        case 13:
+          index++;
+          _context4.next = 6;
+          break;
+
+        case 16:
+          _context4.next = 18;
+          return {
+            type: 'REPLACE_BLOCKS',
+            clientIds: clientIds,
+            blocks: blocks,
+            time: Date.now()
+          };
+
+        case 18:
+          return _context4.delegateYield(ensureDefaultBlock(), "t0", 19);
+
+        case 19:
+        case "end":
+          return _context4.stop();
+      }
+    }
+  }, _marked4, this);
 }
 /**
  * Returns an action object signalling that a single block should be replaced
@@ -5402,17 +5554,74 @@ var actions_moveBlocksUp = createOnMove('MOVE_BLOCKS_UP');
  * @param  {?string} toRootClientId   Root client ID destination.
  * @param  {number}  index            The index to move the block into.
  *
- * @return {Object} Action object.
+ * @yields {Object} Action object.
  */
 
 function moveBlockToPosition(clientId, fromRootClientId, toRootClientId, index) {
-  return {
-    type: 'MOVE_BLOCK_TO_POSITION',
-    fromRootClientId: fromRootClientId,
-    toRootClientId: toRootClientId,
-    clientId: clientId,
-    index: index
-  };
+  var templateLock, action, blockName, canInsertBlock;
+  return regenerator_default.a.wrap(function moveBlockToPosition$(_context5) {
+    while (1) {
+      switch (_context5.prev = _context5.next) {
+        case 0:
+          _context5.next = 2;
+          return controls_select('core/block-editor', 'getTemplateLock', fromRootClientId);
+
+        case 2:
+          templateLock = _context5.sent;
+
+          if (!(templateLock === 'all')) {
+            _context5.next = 5;
+            break;
+          }
+
+          return _context5.abrupt("return");
+
+        case 5:
+          action = {
+            type: 'MOVE_BLOCK_TO_POSITION',
+            fromRootClientId: fromRootClientId,
+            toRootClientId: toRootClientId,
+            clientId: clientId,
+            index: index
+          }; // If moving inside the same root block the move is always possible.
+
+          if (!(fromRootClientId === toRootClientId)) {
+            _context5.next = 10;
+            break;
+          }
+
+          _context5.next = 9;
+          return action;
+
+        case 9:
+          return _context5.abrupt("return");
+
+        case 10:
+          _context5.next = 12;
+          return controls_select('core/block-editor', 'getBlockName', clientId);
+
+        case 12:
+          blockName = _context5.sent;
+          _context5.next = 15;
+          return controls_select('core/block-editor', 'canInsertBlockType', blockName, toRootClientId);
+
+        case 15:
+          canInsertBlock = _context5.sent;
+
+          if (!canInsertBlock) {
+            _context5.next = 19;
+            break;
+          }
+
+          _context5.next = 19;
+          return action;
+
+        case 19:
+        case "end":
+          return _context5.stop();
+      }
+    }
+  }, _marked5, this);
 }
 /**
  * Returns an action object used in signalling that a single block should be
@@ -5439,19 +5648,111 @@ function actions_insertBlock(block, index, rootClientId) {
  * @param {?string}  rootClientId    Optional root client ID of block list on which to insert.
  * @param {?boolean} updateSelection If true block selection will be updated.  If false, block selection will not change. Defaults to true.
  *
- * @return {Object} Action object.
+ *  @return {Object} Action object.
  */
 
 function actions_insertBlocks(blocks, index, rootClientId) {
-  var updateSelection = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
-  return {
-    type: 'INSERT_BLOCKS',
-    blocks: Object(external_lodash_["castArray"])(blocks),
-    index: index,
-    rootClientId: rootClientId,
-    time: Date.now(),
-    updateSelection: updateSelection
-  };
+  var updateSelection,
+      allowedBlocks,
+      _iteratorNormalCompletion,
+      _didIteratorError,
+      _iteratorError,
+      _iterator,
+      _step,
+      block,
+      isValid,
+      _args6 = arguments;
+
+  return regenerator_default.a.wrap(function insertBlocks$(_context6) {
+    while (1) {
+      switch (_context6.prev = _context6.next) {
+        case 0:
+          updateSelection = _args6.length > 3 && _args6[3] !== undefined ? _args6[3] : true;
+          blocks = Object(external_lodash_["castArray"])(blocks);
+          allowedBlocks = [];
+          _iteratorNormalCompletion = true;
+          _didIteratorError = false;
+          _iteratorError = undefined;
+          _context6.prev = 6;
+          _iterator = blocks[Symbol.iterator]();
+
+        case 8:
+          if (_iteratorNormalCompletion = (_step = _iterator.next()).done) {
+            _context6.next = 17;
+            break;
+          }
+
+          block = _step.value;
+          _context6.next = 12;
+          return controls_select('core/block-editor', 'canInsertBlockType', block.name, rootClientId);
+
+        case 12:
+          isValid = _context6.sent;
+
+          if (isValid) {
+            allowedBlocks.push(block);
+          }
+
+        case 14:
+          _iteratorNormalCompletion = true;
+          _context6.next = 8;
+          break;
+
+        case 17:
+          _context6.next = 23;
+          break;
+
+        case 19:
+          _context6.prev = 19;
+          _context6.t0 = _context6["catch"](6);
+          _didIteratorError = true;
+          _iteratorError = _context6.t0;
+
+        case 23:
+          _context6.prev = 23;
+          _context6.prev = 24;
+
+          if (!_iteratorNormalCompletion && _iterator.return != null) {
+            _iterator.return();
+          }
+
+        case 26:
+          _context6.prev = 26;
+
+          if (!_didIteratorError) {
+            _context6.next = 29;
+            break;
+          }
+
+          throw _iteratorError;
+
+        case 29:
+          return _context6.finish(26);
+
+        case 30:
+          return _context6.finish(23);
+
+        case 31:
+          if (!allowedBlocks.length) {
+            _context6.next = 33;
+            break;
+          }
+
+          return _context6.abrupt("return", {
+            type: 'INSERT_BLOCKS',
+            blocks: allowedBlocks,
+            index: index,
+            rootClientId: rootClientId,
+            time: Date.now(),
+            updateSelection: updateSelection
+          });
+
+        case 33:
+        case "end":
+          return _context6.stop();
+      }
+    }
+  }, _marked6, this, [[6, 19, 23, 31], [24,, 26, 30]]);
 }
 /**
  * Returns an action object used in signalling that the insertion point should
@@ -5533,51 +5834,38 @@ function mergeBlocks(firstBlockClientId, secondBlockClientId) {
 
 function actions_removeBlocks(clientIds) {
   var selectPrevious,
-      count,
-      _args3 = arguments;
-  return regenerator_default.a.wrap(function removeBlocks$(_context3) {
+      _args7 = arguments;
+  return regenerator_default.a.wrap(function removeBlocks$(_context7) {
     while (1) {
-      switch (_context3.prev = _context3.next) {
+      switch (_context7.prev = _context7.next) {
         case 0:
-          selectPrevious = _args3.length > 1 && _args3[1] !== undefined ? _args3[1] : true;
+          selectPrevious = _args7.length > 1 && _args7[1] !== undefined ? _args7[1] : true;
           clientIds = Object(external_lodash_["castArray"])(clientIds);
 
           if (!selectPrevious) {
-            _context3.next = 5;
+            _context7.next = 5;
             break;
           }
 
-          _context3.next = 5;
+          _context7.next = 5;
           return selectPreviousBlock(clientIds[0]);
 
         case 5:
-          _context3.next = 7;
+          _context7.next = 7;
           return {
             type: 'REMOVE_BLOCKS',
             clientIds: clientIds
           };
 
         case 7:
-          _context3.next = 9;
-          return controls_select('core/block-editor', 'getBlockCount');
+          return _context7.delegateYield(ensureDefaultBlock(), "t0", 8);
 
-        case 9:
-          count = _context3.sent;
-
-          if (!(count === 0)) {
-            _context3.next = 13;
-            break;
-          }
-
-          _context3.next = 13;
-          return actions_insertDefaultBlock();
-
-        case 13:
+        case 8:
         case "end":
-          return _context3.stop();
+          return _context7.stop();
       }
     }
-  }, _marked3, this);
+  }, _marked7, this);
 }
 /**
  * Returns an action object used in signalling that the block with the
@@ -5592,6 +5880,27 @@ function actions_removeBlocks(clientIds) {
 
 function removeBlock(clientId, selectPrevious) {
   return actions_removeBlocks([clientId], selectPrevious);
+}
+/**
+ * Returns an action object used in signalling that the inner blocks with the
+ * specified client ID should be replaced.
+ *
+ * @param {string}   rootClientId    Client ID of the block whose InnerBlocks will re replaced.
+ * @param {Object[]} blocks          Block objects to insert as new InnerBlocks
+ * @param {?boolean} updateSelection If true block selection will be updated. If false, block selection will not change. Defaults to true.
+ *
+ * @return {Object} Action object.
+ */
+
+function actions_replaceInnerBlocks(rootClientId, blocks) {
+  var updateSelection = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+  return {
+    type: 'REPLACE_INNER_BLOCKS',
+    rootClientId: rootClientId,
+    blocks: blocks,
+    updateSelection: updateSelection,
+    time: Date.now()
+  };
 }
 /**
  * Returns an action object used to toggle the block editing mode between
@@ -5678,7 +5987,7 @@ function actions_insertDefaultBlock(attributes, rootClientId, index) {
  * @return {Object} Action object
  */
 
-function actions_updateBlockListSettings(clientId, settings) {
+function updateBlockListSettings(clientId, settings) {
   return {
     type: 'UPDATE_BLOCK_LIST_SETTINGS',
     clientId: clientId,
@@ -7070,6 +7379,24 @@ function isLastBlockChangePersistent(state) {
   return state.blocks.isPersistentChange;
 }
 /**
+ * Returns true if the most recent block change is be considered ignored, or
+ * false otherwise. An ignored change is one not to be committed by
+ * BlockEditorProvider, neither via `onChange` nor `onInput`.
+ *
+ * @param {Object} state Block editor state.
+ *
+ * @return {boolean} Whether the most recent block change was ignored.
+ */
+
+function __unstableIsLastBlockChangeIgnored(state) {
+  // TODO: Removal Plan: Changes incurred by RECEIVE_BLOCKS should not be
+  // ignored if in-fact they result in a change in blocks state. The current
+  // need to ignore changes not a result of user interaction should be
+  // accounted for in the refactoring of reusable blocks as occurring within
+  // their own separate block editor / state (#7119).
+  return state.blocks.isIgnoredChange;
+}
+/**
  * Returns the value of a post meta from the editor settings.
  *
  * @param {Object} state Global application state.
@@ -7139,23 +7466,6 @@ function validateBlocksToTemplate(action, store) {
     return setTemplateValidity(isBlocksValidToTemplate);
   }
 }
-/**
- * Effect handler which will return a default block insertion action if there
- * are no other blocks at the root of the editor. This is expected to be used
- * in actions which may result in no blocks remaining in the editor (removal,
- * replacement, etc).
- *
- * @param {Object} action Action which had initiated the effect handler.
- * @param {Object} store  Store instance.
- *
- * @return {?Object} Default block insert action, if no other blocks exist.
- */
-
-function ensureDefaultBlock(action, store) {
-  if (!selectors_getBlockCount(store.getState())) {
-    return actions_insertDefaultBlock();
-  }
-}
 /* harmony default export */ var effects = ({
   MERGE_BLOCKS: function MERGE_BLOCKS(action, store) {
     var dispatch = store.dispatch;
@@ -7190,7 +7500,6 @@ function ensureDefaultBlock(action, store) {
     })].concat(Object(toConsumableArray["a" /* default */])(blocksWithTheSameType.slice(1)))));
   },
   RESET_BLOCKS: [validateBlocksToTemplate],
-  REPLACE_BLOCKS: [ensureDefaultBlock],
   MULTI_SELECT: function MULTI_SELECT(action, _ref) {
     var getState = _ref.getState;
     var blockCount = selectors_getSelectedBlockCount(getState());
@@ -7297,7 +7606,7 @@ var classnames_default = /*#__PURE__*/__webpack_require__.n(classnames);
 var external_this_wp_compose_ = __webpack_require__(6);
 
 // EXTERNAL MODULE: external {"this":["wp","hooks"]}
-var external_this_wp_hooks_ = __webpack_require__(24);
+var external_this_wp_hooks_ = __webpack_require__(26);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/classCallCheck.js
 var classCallCheck = __webpack_require__(10);
@@ -8743,7 +9052,7 @@ var external_this_wp_isShallowEqual_ = __webpack_require__(42);
 var external_this_wp_isShallowEqual_default = /*#__PURE__*/__webpack_require__.n(external_this_wp_isShallowEqual_);
 
 // EXTERNAL MODULE: external {"this":["wp","dom"]}
-var external_this_wp_dom_ = __webpack_require__(25);
+var external_this_wp_dom_ = __webpack_require__(24);
 
 // CONCATENATED MODULE: ./node_modules/@wordpress/block-editor/build-module/components/block-mover/mover-description.js
 /**
@@ -9429,7 +9738,7 @@ function Warning(_ref) {
 /* harmony default export */ var warning = (Warning);
 
 // EXTERNAL MODULE: ./node_modules/diff/dist/diff.js
-var diff = __webpack_require__(207);
+var diff = __webpack_require__(201);
 
 // CONCATENATED MODULE: ./node_modules/@wordpress/block-editor/build-module/components/block-compare/block-view.js
 
@@ -9817,7 +10126,7 @@ function (_Component) {
 /* harmony default export */ var block_crash_boundary = (block_crash_boundary_BlockCrashBoundary);
 
 // EXTERNAL MODULE: ./node_modules/react-autosize-textarea/lib/index.js
-var react_autosize_textarea_lib = __webpack_require__(61);
+var react_autosize_textarea_lib = __webpack_require__(60);
 var react_autosize_textarea_lib_default = /*#__PURE__*/__webpack_require__.n(react_autosize_textarea_lib);
 
 // CONCATENATED MODULE: ./node_modules/@wordpress/block-editor/build-module/components/block-list/block-html.js
@@ -10280,7 +10589,7 @@ var dom_scroll_into_view_lib = __webpack_require__(67);
 var dom_scroll_into_view_lib_default = /*#__PURE__*/__webpack_require__.n(dom_scroll_into_view_lib);
 
 // EXTERNAL MODULE: external {"this":["wp","url"]}
-var external_this_wp_url_ = __webpack_require__(23);
+var external_this_wp_url_ = __webpack_require__(25);
 
 // CONCATENATED MODULE: ./node_modules/@wordpress/block-editor/build-module/components/block-preview/index.js
 
@@ -11892,20 +12201,42 @@ function (_Component) {
     }
   }, {
     key: "setAttributes",
-    value: function setAttributes(attributes) {
+    value: function setAttributes(newAttributes) {
       var _this$props = this.props,
           clientId = _this$props.clientId,
           name = _this$props.name,
           onChange = _this$props.onChange;
       var type = Object(external_this_wp_blocks_["getBlockType"])(name);
-      onChange(clientId, attributes);
-      var metaAttributes = Object(external_lodash_["reduce"])(attributes, function (result, value, key) {
-        if (Object(external_lodash_["get"])(type, ['attributes', key, 'source']) === 'meta') {
-          result[type.attributes[key].meta] = value;
+
+      function isMetaAttribute(key) {
+        return Object(external_lodash_["get"])(type, ['attributes', key, 'source']) === 'meta';
+      } // Partition new attributes to delegate update behavior by source.
+      //
+      // TODO: A consolidated approach to external attributes sourcing
+      // should be devised to avoid specific handling for meta, enable
+      // additional attributes sources.
+      //
+      // See: https://github.com/WordPress/gutenberg/issues/2759
+
+
+      var _reduce = Object(external_lodash_["reduce"])(newAttributes, function (result, value, key) {
+        if (isMetaAttribute(key)) {
+          result.metaAttributes[type.attributes[key].meta] = value;
+        } else {
+          result.blockAttributes[key] = value;
         }
 
         return result;
-      }, {});
+      }, {
+        blockAttributes: {},
+        metaAttributes: {}
+      }),
+          blockAttributes = _reduce.blockAttributes,
+          metaAttributes = _reduce.metaAttributes;
+
+      if (Object(external_lodash_["size"])(blockAttributes)) {
+        onChange(clientId, blockAttributes);
+      }
 
       if (Object(external_lodash_["size"])(metaAttributes)) {
         this.props.onMetaChange(metaAttributes);
@@ -12472,7 +12803,7 @@ var applyWithDispatch = Object(external_this_wp_data_["withDispatch"])(function 
 }), applyWithSelect, applyWithDispatch, Object(external_this_wp_components_["withFilters"])('editor.BlockListBlock'))(block_BlockListBlock));
 
 // EXTERNAL MODULE: external {"this":["wp","htmlEntities"]}
-var external_this_wp_htmlEntities_ = __webpack_require__(57);
+var external_this_wp_htmlEntities_ = __webpack_require__(56);
 
 // CONCATENATED MODULE: ./node_modules/@wordpress/block-editor/build-module/components/default-block-appender/index.js
 
@@ -13132,8 +13463,7 @@ inner_blocks_InnerBlocks = Object(external_this_wp_compose_["compose"])([context
   };
 }), Object(external_this_wp_data_["withDispatch"])(function (dispatch, ownProps) {
   var _dispatch = dispatch('core/block-editor'),
-      replaceBlocks = _dispatch.replaceBlocks,
-      insertBlocks = _dispatch.insertBlocks,
+      _replaceInnerBlocks = _dispatch.replaceInnerBlocks,
       updateBlockListSettings = _dispatch.updateBlockListSettings;
 
   var block = ownProps.block,
@@ -13142,13 +13472,7 @@ inner_blocks_InnerBlocks = Object(external_this_wp_compose_["compose"])([context
       templateInsertUpdatesSelection = _ownProps$templateIns === void 0 ? true : _ownProps$templateIns;
   return {
     replaceInnerBlocks: function replaceInnerBlocks(blocks) {
-      var clientIds = Object(external_lodash_["map"])(block.innerBlocks, 'clientId');
-
-      if (clientIds.length) {
-        replaceBlocks(clientIds, blocks);
-      } else {
-        insertBlocks(blocks, undefined, clientId, templateInsertUpdatesSelection);
-      }
+      _replaceInnerBlocks(clientId, blocks, block.innerBlocks.length === 0 && templateInsertUpdatesSelection);
     },
     updateNestedSettings: function updateNestedSettings(settings) {
       dispatch(updateBlockListSettings(clientId, settings));
@@ -13608,7 +13932,8 @@ function applyInternetExplorerInputFix(editorNode) {
 }
 
 var IS_PLACEHOLDER_VISIBLE_ATTR_NAME = 'data-is-placeholder-visible';
-var CLASS_NAME = 'editor-rich-text__editable block-editor-rich-text__editable';
+var oldClassName = 'editor-rich-text__editable';
+var editable_className = 'block-editor-rich-text__editable';
 /**
  * Whether or not the user agent is Internet Explorer.
  *
@@ -13654,7 +13979,7 @@ function (_Component) {
       }
 
       if (!Object(external_lodash_["isEqual"])(this.props.className, nextProps.className)) {
-        this.editorNode.className = classnames_default()(nextProps.className, CLASS_NAME);
+        this.editorNode.className = classnames_default()(editable_className, oldClassName, nextProps.className);
       }
 
       var _diffAriaProps = aria_diffAriaProps(this.props, nextProps),
@@ -13705,7 +14030,7 @@ function (_Component) {
           style = _this$props.style,
           record = _this$props.record,
           valueToEditableHTML = _this$props.valueToEditableHTML,
-          className = _this$props.className,
+          additionalClassName = _this$props.className,
           isPlaceholderVisible = _this$props.isPlaceholderVisible,
           remainingProps = Object(objectWithoutProperties["a" /* default */])(_this$props, ["tagName", "style", "record", "valueToEditableHTML", "className", "isPlaceholderVisible"]);
 
@@ -13713,7 +14038,7 @@ function (_Component) {
       return Object(external_this_wp_element_["createElement"])(tagName, Object(objectSpread["a" /* default */])((_objectSpread2 = {
         role: 'textbox',
         'aria-multiline': true,
-        className: classnames_default()(className, CLASS_NAME),
+        className: classnames_default()(editable_className, oldClassName, additionalClassName),
         contentEditable: true
       }, Object(defineProperty["a" /* default */])(_objectSpread2, IS_PLACEHOLDER_VISIBLE_ATTR_NAME, isPlaceholderVisible), Object(defineProperty["a" /* default */])(_objectSpread2, "ref", this.bindEditorNode), Object(defineProperty["a" /* default */])(_objectSpread2, "style", style), Object(defineProperty["a" /* default */])(_objectSpread2, "suppressContentEditableWarning", true), Object(defineProperty["a" /* default */])(_objectSpread2, "dangerouslySetInnerHTML", {
         __html: valueToEditableHTML(record)
@@ -14219,6 +14544,12 @@ var rich_text_window = window,
  */
 
 var INSERTION_INPUT_TYPES_TO_IGNORE = new Set(['insertParagraph', 'insertOrderedList', 'insertUnorderedList', 'insertHorizontalRule', 'insertLink']);
+/**
+ * Global stylesheet.
+ */
+
+var globalStyle = document.createElement('style');
+document.head.appendChild(globalStyle);
 var rich_text_RichText =
 /*#__PURE__*/
 function (_Component) {
@@ -14274,7 +14605,7 @@ function (_Component) {
     _this.handleHorizontalNavigation = _this.handleHorizontalNavigation.bind(Object(assertThisInitialized["a" /* default */])(Object(assertThisInitialized["a" /* default */])(_this)));
     _this.onPointerDown = _this.onPointerDown.bind(Object(assertThisInitialized["a" /* default */])(Object(assertThisInitialized["a" /* default */])(_this)));
     _this.formatToValue = memize_default()(_this.formatToValue.bind(Object(assertThisInitialized["a" /* default */])(Object(assertThisInitialized["a" /* default */])(_this))), {
-      size: 1
+      maxSize: 1
     });
     _this.savedContent = value;
     _this.patterns = getPatterns({
@@ -14331,14 +14662,14 @@ function (_Component) {
       var _this$state = this.state,
           start = _this$state.start,
           end = _this$state.end,
-          selectedFormat = _this$state.selectedFormat;
+          activeFormats = _this$state.activeFormats;
       return {
         formats: formats,
         replacements: replacements,
         text: text,
         start: start,
         end: end,
-        selectedFormat: selectedFormat
+        activeFormats: activeFormats
       };
     }
   }, {
@@ -14351,7 +14682,6 @@ function (_Component) {
         range: range,
         multilineTag: this.multilineTag,
         multilineWrapperTags: this.multilineWrapperTags,
-        prepareEditableTree: this.props.prepareEditableTree,
         __unstableIsEditableTree: true
       });
     }
@@ -14527,6 +14857,7 @@ function (_Component) {
         unstableOnFocus();
       }
 
+      this.recalculateBoundaryStyle();
       document.addEventListener('selectionchange', this.onSelectionChange);
     }
   }, {
@@ -14564,46 +14895,19 @@ function (_Component) {
         }
       }
 
-      var selectedFormat = this.state.selectedFormat;
+      var value = this.createRecord();
+      var _this$state2 = this.state,
+          _this$state2$activeFo = _this$state2.activeFormats,
+          activeFormats = _this$state2$activeFo === void 0 ? [] : _this$state2$activeFo,
+          start = _this$state2.start; // Update the formats between the last and new caret position.
 
-      var _this$createRecord = this.createRecord(),
-          formats = _this$createRecord.formats,
-          replacements = _this$createRecord.replacements,
-          text = _this$createRecord.text,
-          start = _this$createRecord.start,
-          end = _this$createRecord.end;
-
-      if (this.formatPlaceholder) {
-        selectedFormat = this.formatPlaceholder.length;
-
-        if (selectedFormat > 0) {
-          formats[this.state.start] = this.formatPlaceholder;
-        } else {
-          delete formats[this.state.start];
-        }
-      } else if (selectedFormat > 0) {
-        var formatsBefore = formats[start - 1] || [];
-        var formatsAfter = formats[start] || [];
-        var source = formatsBefore;
-
-        if (formatsAfter.length > formatsBefore.length) {
-          source = formatsAfter;
-        }
-
-        source = source.slice(0, selectedFormat);
-        formats[this.state.start] = source;
-      } else {
-        delete formats[this.state.start];
-      }
-
-      var change = {
-        formats: formats,
-        replacements: replacements,
-        text: text,
+      var change = Object(external_this_wp_richText_["__unstableUpdateFormats"])({
+        value: value,
         start: start,
-        end: end,
-        selectedFormat: selectedFormat
-      };
+        end: value.start,
+        formats: activeFormats
+      });
+
       this.onChange(change, {
         withoutHistory: true
       });
@@ -14614,7 +14918,7 @@ function (_Component) {
       if (transformed !== change) {
         this.onCreateUndoLevel();
         this.onChange(Object(objectSpread["a" /* default */])({}, transformed, {
-          selectedFormat: selectedFormat
+          activeFormats: activeFormats
         }));
       } // Create an undo level when input stops for over a second.
 
@@ -14638,45 +14942,52 @@ function (_Component) {
   }, {
     key: "onSelectionChange",
     value: function onSelectionChange() {
-      if (this.ignoreSelectionChange) {
-        delete this.ignoreSelectionChange;
-        return;
-      }
-
       var value = this.createRecord();
       var start = value.start,
-          end = value.end,
-          formats = value.formats;
+          end = value.end;
 
       if (start !== this.state.start || end !== this.state.end) {
         var isCaretWithinFormattedText = this.props.isCaretWithinFormattedText;
 
-        if (!isCaretWithinFormattedText && formats[start]) {
+        var activeFormats = Object(external_this_wp_richText_["__unstableGetActiveFormats"])(value);
+
+        if (!isCaretWithinFormattedText && activeFormats.length) {
           this.props.onEnterFormattedText();
-        } else if (isCaretWithinFormattedText && !formats[start]) {
+        } else if (isCaretWithinFormattedText && !activeFormats.length) {
           this.props.onExitFormattedText();
-        }
-
-        var selectedFormat;
-
-        if (Object(external_this_wp_richText_["isCollapsed"])(value)) {
-          var formatsBefore = formats[start - 1] || [];
-          var formatsAfter = formats[start] || [];
-          selectedFormat = Math.min(formatsBefore.length, formatsAfter.length);
         }
 
         this.setState({
           start: start,
           end: end,
-          selectedFormat: selectedFormat
+          activeFormats: activeFormats
         });
         this.applyRecord(Object(objectSpread["a" /* default */])({}, value, {
-          selectedFormat: selectedFormat
+          activeFormats: activeFormats
         }), {
           domOnly: true
         });
-        delete this.formatPlaceholder;
+
+        if (activeFormats.length > 0) {
+          this.recalculateBoundaryStyle();
+        }
       }
+    }
+  }, {
+    key: "recalculateBoundaryStyle",
+    value: function recalculateBoundaryStyle() {
+      var boundarySelector = '*[data-rich-text-format-boundary]';
+      var element = this.editableRef.querySelector(boundarySelector);
+
+      if (!element) {
+        return;
+      }
+
+      var computedStyle = getComputedStyle(element);
+      var newColor = computedStyle.color.replace(')', ', 0.2)').replace('rgb', 'rgba');
+      var selector = ".".concat(editable_className, ":focus ").concat(boundarySelector);
+      var rule = "background-color: ".concat(newColor);
+      globalStyle.innerHTML = "".concat(selector, " {").concat(rule, "}");
     }
     /**
      * Calls all registered onChangeEditableValue handlers.
@@ -14713,16 +15024,15 @@ function (_Component) {
       this.applyRecord(record);
       var start = record.start,
           end = record.end,
-          formatPlaceholder = record.formatPlaceholder,
-          selectedFormat = record.selectedFormat;
-      this.formatPlaceholder = formatPlaceholder;
+          _record$activeFormats = record.activeFormats,
+          activeFormats = _record$activeFormats === void 0 ? [] : _record$activeFormats;
       this.onChangeEditableValue(record);
       this.savedContent = this.valueToFormat(record);
       this.props.onChange(this.savedContent);
       this.setState({
         start: start,
         end: end,
-        selectedFormat: selectedFormat
+        activeFormats: activeFormats
       });
 
       if (!withoutHistory) {
@@ -14939,20 +15249,27 @@ function (_Component) {
   }, {
     key: "handleHorizontalNavigation",
     value: function handleHorizontalNavigation(event) {
+      var _this2 = this;
+
       var value = this.createRecord();
       var formats = value.formats,
           text = value.text,
           start = value.start,
           end = value.end;
-      var selectedFormat = this.state.selectedFormat;
-      var collapsed = Object(external_this_wp_richText_["isCollapsed"])(value);
-      var isReverse = event.keyCode === external_this_wp_keycodes_["LEFT"];
-      delete this.formatPlaceholder; // If the selection is collapsed and at the very start, do nothing if
+      var _this$state$activeFor = this.state.activeFormats,
+          activeFormats = _this$state$activeFor === void 0 ? [] : _this$state$activeFor;
+      var collapsed = Object(external_this_wp_richText_["isCollapsed"])(value); // To do: ideally, we should look at visual position instead.
+
+      var _getComputedStyle = getComputedStyle(this.editableRef),
+          direction = _getComputedStyle.direction;
+
+      var reverseKey = direction === 'rtl' ? external_this_wp_keycodes_["RIGHT"] : external_this_wp_keycodes_["LEFT"];
+      var isReverse = event.keyCode === reverseKey; // If the selection is collapsed and at the very start, do nothing if
       // navigating backward.
       // If the selection is collapsed and at the very end, do nothing if
       // navigating forward.
 
-      if (collapsed && selectedFormat === 0) {
+      if (collapsed && activeFormats.length === 0) {
         if (start === 0 && isReverse) {
           return;
         }
@@ -14970,39 +15287,48 @@ function (_Component) {
       } // In all other cases, prevent default behaviour.
 
 
-      event.preventDefault(); // Ignore the selection change handler when setting selection, all state
-      // will be set here.
-
-      this.ignoreSelectionChange = true;
+      event.preventDefault();
       var formatsBefore = formats[start - 1] || [];
       var formatsAfter = formats[start] || [];
-      var newSelectedFormat = selectedFormat; // If the amount of formats before the caret and after the caret is
+      var newActiveFormatsLength = activeFormats.length;
+      var source = formatsAfter;
+
+      if (formatsBefore.length > formatsAfter.length) {
+        source = formatsBefore;
+      } // If the amount of formats before the caret and after the caret is
       // different, the caret is at a format boundary.
 
+
       if (formatsBefore.length < formatsAfter.length) {
-        if (!isReverse && selectedFormat < formatsAfter.length) {
-          newSelectedFormat++;
+        if (!isReverse && activeFormats.length < formatsAfter.length) {
+          newActiveFormatsLength++;
         }
 
-        if (isReverse && selectedFormat > formatsBefore.length) {
-          newSelectedFormat--;
+        if (isReverse && activeFormats.length > formatsBefore.length) {
+          newActiveFormatsLength--;
         }
       } else if (formatsBefore.length > formatsAfter.length) {
-        if (!isReverse && selectedFormat > formatsAfter.length) {
-          newSelectedFormat--;
+        if (!isReverse && activeFormats.length > formatsAfter.length) {
+          newActiveFormatsLength--;
         }
 
-        if (isReverse && selectedFormat < formatsBefore.length) {
-          newSelectedFormat++;
+        if (isReverse && activeFormats.length < formatsBefore.length) {
+          newActiveFormatsLength++;
         }
-      }
+      } // Wait for boundary class to be added.
 
-      if (newSelectedFormat !== selectedFormat) {
+
+      setTimeout(function () {
+        return _this2.recalculateBoundaryStyle();
+      });
+
+      if (newActiveFormatsLength !== activeFormats.length) {
+        var newActiveFormats = source.slice(0, newActiveFormatsLength);
         this.applyRecord(Object(objectSpread["a" /* default */])({}, value, {
-          selectedFormat: newSelectedFormat
+          activeFormats: newActiveFormats
         }));
         this.setState({
-          selectedFormat: newSelectedFormat
+          activeFormats: newActiveFormats
         });
         return;
       }
@@ -15015,7 +15341,7 @@ function (_Component) {
       this.applyRecord(Object(objectSpread["a" /* default */])({}, value, {
         start: newPos,
         end: newPos,
-        selectedFormat: isReverse ? formatsBefore.length : formatsAfter.length
+        activeFormats: isReverse ? formatsBefore : formatsAfter
       }));
     }
     /**
@@ -15102,7 +15428,7 @@ function (_Component) {
   }, {
     key: "componentDidUpdate",
     value: function componentDidUpdate(prevProps) {
-      var _this2 = this;
+      var _this3 = this;
 
       var _this$props2 = this.props,
           tagName = _this$props2.tagName,
@@ -15140,12 +15466,12 @@ function (_Component) {
         } // Allow primitives and arrays:
 
 
-        if (!Object(external_lodash_["isPlainObject"])(_this2.props[name])) {
-          return _this2.props[name] !== prevProps[name];
+        if (!Object(external_lodash_["isPlainObject"])(_this3.props[name])) {
+          return _this3.props[name] !== prevProps[name];
         }
 
-        return Object.keys(_this2.props[name]).some(function (subName) {
-          return _this2.props[name][subName] !== prevProps[name][subName];
+        return Object.keys(_this3.props[name]).some(function (subName) {
+          return _this3.props[name][subName] !== prevProps[name][subName];
         });
       });
 
@@ -15272,7 +15598,7 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this3 = this;
+      var _this4 = this;
 
       var _this$props3 = this.props,
           _this$props3$tagName = _this$props3.tagName,
@@ -15324,7 +15650,7 @@ function (_Component) {
           tagName: Tagname,
           style: style,
           record: record,
-          valueToEditableHTML: _this3.valueToEditableHTML,
+          valueToEditableHTML: _this4.valueToEditableHTML,
           isPlaceholderVisible: isPlaceholderVisible,
           "aria-label": placeholder,
           "aria-autocomplete": "list",
@@ -15333,21 +15659,21 @@ function (_Component) {
         }, ariaProps, {
           className: className,
           key: key,
-          onPaste: _this3.onPaste,
-          onInput: _this3.onInput,
-          onCompositionEnd: _this3.onCompositionEnd,
-          onKeyDown: _this3.onKeyDown,
-          onFocus: _this3.onFocus,
-          onBlur: _this3.onBlur,
-          onMouseDown: _this3.onPointerDown,
-          onTouchStart: _this3.onPointerDown,
-          setRef: _this3.setRef
+          onPaste: _this4.onPaste,
+          onInput: _this4.onInput,
+          onCompositionEnd: _this4.onCompositionEnd,
+          onKeyDown: _this4.onKeyDown,
+          onFocus: _this4.onFocus,
+          onBlur: _this4.onBlur,
+          onMouseDown: _this4.onPointerDown,
+          onTouchStart: _this4.onPointerDown,
+          setRef: _this4.setRef
         })), isPlaceholderVisible && Object(external_this_wp_element_["createElement"])(Tagname, {
           className: classnames_default()('editor-rich-text__editable block-editor-rich-text__editable', className),
           style: style
         }, MultilineTag ? Object(external_this_wp_element_["createElement"])(MultilineTag, null, placeholder) : placeholder), isSelected && Object(external_this_wp_element_["createElement"])(format_edit, {
           value: record,
-          onChange: _this3.onChange
+          onChange: _this4.onChange
         }));
       }), isSelected && Object(external_this_wp_element_["createElement"])(RemoveBrowserShortcuts, null));
     }
@@ -15491,6 +15817,8 @@ var MediaUpload = function MediaUpload() {
 
 
 
+
+
 /**
  * WordPress dependencies
  */
@@ -15529,21 +15857,19 @@ function (_Component) {
       var _this$props = this.props,
           children = _this$props.children,
           renderSettings = _this$props.renderSettings,
-          onClose = _this$props.onClose,
-          onClickOutside = _this$props.onClickOutside,
           _this$props$position = _this$props.position,
           position = _this$props$position === void 0 ? 'bottom center' : _this$props$position,
           _this$props$focusOnMo = _this$props.focusOnMount,
-          focusOnMount = _this$props$focusOnMo === void 0 ? 'firstElement' : _this$props$focusOnMo;
+          focusOnMount = _this$props$focusOnMo === void 0 ? 'firstElement' : _this$props$focusOnMo,
+          popoverProps = Object(objectWithoutProperties["a" /* default */])(_this$props, ["children", "renderSettings", "position", "focusOnMount"]);
+
       var isSettingsExpanded = this.state.isSettingsExpanded;
       var showSettings = !!renderSettings && isSettingsExpanded;
-      return Object(external_this_wp_element_["createElement"])(external_this_wp_components_["Popover"], {
+      return Object(external_this_wp_element_["createElement"])(external_this_wp_components_["Popover"], Object(esm_extends["a" /* default */])({
         className: "editor-url-popover block-editor-url-popover",
         focusOnMount: focusOnMount,
-        position: position,
-        onClose: onClose,
-        onClickOutside: onClickOutside
-      }, Object(external_this_wp_element_["createElement"])("div", {
+        position: position
+      }, popoverProps), Object(external_this_wp_element_["createElement"])("div", {
         className: "editor-url-popover__row block-editor-url-popover__row"
       }, children, !!renderSettings && Object(external_this_wp_element_["createElement"])(external_this_wp_components_["IconButton"], {
         className: "editor-url-popover__settings-toggle block-editor-url-popover__settings-toggle",
@@ -16629,7 +16955,7 @@ var skip_to_selected_block_SkipToSelectedBlock = function SkipToSelectedBlock(_r
 })(skip_to_selected_block_SkipToSelectedBlock));
 
 // EXTERNAL MODULE: external {"this":["wp","tokenList"]}
-var external_this_wp_tokenList_ = __webpack_require__(135);
+var external_this_wp_tokenList_ = __webpack_require__(137);
 var external_this_wp_tokenList_default = /*#__PURE__*/__webpack_require__.n(external_this_wp_tokenList_);
 
 // CONCATENATED MODULE: ./node_modules/@wordpress/block-editor/build-module/components/block-styles/index.js
@@ -16829,7 +17155,7 @@ function BlockStyles(_ref) {
 })])(BlockStyles));
 
 // EXTERNAL MODULE: external {"this":["wp","wordcount"]}
-var external_this_wp_wordcount_ = __webpack_require__(98);
+var external_this_wp_wordcount_ = __webpack_require__(97);
 
 // CONCATENATED MODULE: ./node_modules/@wordpress/block-editor/build-module/components/multi-selection-inspector/index.js
 
@@ -17109,8 +17435,7 @@ function BlockModeToggle(_ref) {
   return Object(external_this_wp_element_["createElement"])(external_this_wp_components_["MenuItem"], {
     className: "editor-block-settings-menu__control block-editor-block-settings-menu__control",
     onClick: onToggleMode,
-    icon: "html",
-    label: small ? label : undefined
+    icon: "html"
   }, !small && label);
 }
 /* harmony default export */ var block_mode_toggle = (Object(external_this_wp_compose_["compose"])([Object(external_this_wp_data_["withSelect"])(function (select, _ref2) {
@@ -17329,8 +17654,7 @@ function BlockConvertButton(_ref) {
   return Object(external_this_wp_element_["createElement"])(external_this_wp_components_["MenuItem"], {
     className: "editor-block-settings-menu__control block-editor-block-settings-menu__control",
     onClick: onClick,
-    icon: "screenoptions",
-    label: small ? label : undefined
+    icon: "screenoptions"
   }, !small && label);
 }
 
@@ -17862,10 +18186,6 @@ function BlockToolbar(_ref) {
 // CONCATENATED MODULE: ./node_modules/@wordpress/block-editor/build-module/components/copy-handler/index.js
 
 
-
-
-
-
 /**
  * WordPress dependencies
  */
@@ -17874,54 +18194,18 @@ function BlockToolbar(_ref) {
 
 
 
+function CopyHandler(_ref) {
+  var children = _ref.children,
+      onCopy = _ref.onCopy,
+      onCut = _ref.onCut;
+  return Object(external_this_wp_element_["createElement"])("div", {
+    onCopy: onCopy,
+    onCut: onCut
+  }, children);
+}
 
-var copy_handler_CopyHandler =
-/*#__PURE__*/
-function (_Component) {
-  Object(inherits["a" /* default */])(CopyHandler, _Component);
-
-  function CopyHandler() {
-    var _this;
-
-    Object(classCallCheck["a" /* default */])(this, CopyHandler);
-
-    _this = Object(possibleConstructorReturn["a" /* default */])(this, Object(getPrototypeOf["a" /* default */])(CopyHandler).apply(this, arguments));
-
-    _this.onCopy = function (event) {
-      return _this.props.onCopy(event);
-    };
-
-    _this.onCut = function (event) {
-      return _this.props.onCut(event);
-    };
-
-    return _this;
-  }
-
-  Object(createClass["a" /* default */])(CopyHandler, [{
-    key: "componentDidMount",
-    value: function componentDidMount() {
-      document.addEventListener('copy', this.onCopy);
-      document.addEventListener('cut', this.onCut);
-    }
-  }, {
-    key: "componentWillUnmount",
-    value: function componentWillUnmount() {
-      document.removeEventListener('copy', this.onCopy);
-      document.removeEventListener('cut', this.onCut);
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      return null;
-    }
-  }]);
-
-  return CopyHandler;
-}(external_this_wp_element_["Component"]);
-
-/* harmony default export */ var copy_handler = (Object(external_this_wp_compose_["compose"])([Object(external_this_wp_data_["withDispatch"])(function (dispatch, ownProps, _ref) {
-  var select = _ref.select;
+/* harmony default export */ var copy_handler = (Object(external_this_wp_compose_["compose"])([Object(external_this_wp_data_["withDispatch"])(function (dispatch, ownProps, _ref2) {
+  var select = _ref2.select;
 
   var _select = select('core/block-editor'),
       getBlocksByClientId = _select.getBlocksByClientId,
@@ -17961,7 +18245,7 @@ function (_Component) {
       }
     }
   };
-})])(copy_handler_CopyHandler));
+})])(CopyHandler));
 
 // CONCATENATED MODULE: ./node_modules/@wordpress/block-editor/build-module/components/multi-select-scroll-into-view/index.js
 
@@ -18453,7 +18737,8 @@ function (_Component) {
  */
 
 var writing_flow_window = window,
-    writing_flow_getSelection = writing_flow_window.getSelection;
+    writing_flow_getSelection = writing_flow_window.getSelection,
+    writing_flow_getComputedStyle = writing_flow_window.getComputedStyle;
 /**
  * Given an element, returns true if the element is a tabbable text field, or
  * false otherwise.
@@ -18665,10 +18950,22 @@ function (_Component) {
       var isNav = isHorizontal || isVertical;
       var isShift = event.shiftKey;
       var hasModifier = isShift || event.ctrlKey || event.altKey || event.metaKey;
-      var isNavEdge = isVertical ? external_this_wp_dom_["isVerticalEdge"] : external_this_wp_dom_["isHorizontalEdge"]; // This logic inside this condition needs to be checked before
+      var isNavEdge = isVertical ? external_this_wp_dom_["isVerticalEdge"] : external_this_wp_dom_["isHorizontalEdge"]; // When presing any key other than up or down, the initial vertical
+      // position must ALWAYS be reset. The vertical position is saved so it
+      // can be restored as well as possible on sebsequent vertical arrow key
+      // presses. It may not always be possible to restore the exact same
+      // position (such as at an empty line), so it wouldn't be good to
+      // compute the position right before any vertical arrow key press.
+
+      if (!isVertical) {
+        this.verticalRect = null;
+      } else if (!this.verticalRect) {
+        this.verticalRect = Object(external_this_wp_dom_["computeCaretRect"])(target);
+      } // This logic inside this condition needs to be checked before
       // the check for event.nativeEvent.defaultPrevented.
       // The logic handles meta+a keypress and this event is default prevented
       // by RichText.
+
 
       if (!isNav) {
         // Set immediately before the meta+a combination can be pressed.
@@ -18704,13 +19001,14 @@ function (_Component) {
 
       if (!isNavigationCandidate(target, keyCode, hasModifier)) {
         return;
-      }
+      } // In the case of RTL scripts, right means previous and left means next,
+      // which is the exact reverse of LTR.
 
-      if (!isVertical) {
-        this.verticalRect = null;
-      } else if (!this.verticalRect) {
-        this.verticalRect = Object(external_this_wp_dom_["computeCaretRect"])(target);
-      }
+
+      var _getComputedStyle = writing_flow_getComputedStyle(target),
+          direction = _getComputedStyle.direction;
+
+      var isReverseDir = direction === 'rtl' ? !isReverse : isReverse;
 
       if (isShift) {
         if (( // Ensure that there is a target block.
@@ -18731,10 +19029,10 @@ function (_Component) {
           Object(external_this_wp_dom_["placeCaretAtVerticalEdge"])(closestTabbable, isReverse, this.verticalRect);
           event.preventDefault();
         }
-      } else if (isHorizontal && writing_flow_getSelection().isCollapsed && Object(external_this_wp_dom_["isHorizontalEdge"])(target, isReverse)) {
-        var _closestTabbable = this.getClosestTabbable(target, isReverse);
+      } else if (isHorizontal && writing_flow_getSelection().isCollapsed && Object(external_this_wp_dom_["isHorizontalEdge"])(target, isReverseDir)) {
+        var _closestTabbable = this.getClosestTabbable(target, isReverseDir);
 
-        Object(external_this_wp_dom_["placeCaretAtHorizontalEdge"])(_closestTabbable, isReverse);
+        Object(external_this_wp_dom_["placeCaretAtHorizontalEdge"])(_closestTabbable, isReverseDir);
         event.preventDefault();
       }
     }
@@ -18905,7 +19203,8 @@ function (_Component) {
 
       var _registry$select = registry.select('core/block-editor'),
           getBlocks = _registry$select.getBlocks,
-          isLastBlockChangePersistent = _registry$select.isLastBlockChangePersistent;
+          isLastBlockChangePersistent = _registry$select.isLastBlockChangePersistent,
+          __unstableIsLastBlockChangeIgnored = _registry$select.__unstableIsLastBlockChangeIgnored;
 
       var blocks = getBlocks();
       var isPersistent = isLastBlockChangePersistent();
@@ -18916,7 +19215,7 @@ function (_Component) {
         var newBlocks = getBlocks();
         var newIsPersistent = isLastBlockChangePersistent();
 
-        if (newBlocks !== blocks && _this.isSyncingIncomingValue) {
+        if (newBlocks !== blocks && (_this.isSyncingIncomingValue || __unstableIsLastBlockChangeIgnored())) {
           _this.isSyncingIncomingValue = false;
           blocks = newBlocks;
           isPersistent = newIsPersistent;
@@ -18925,9 +19224,14 @@ function (_Component) {
 
         if (newBlocks !== blocks || // This happens when a previous input is explicitely marked as persistent.
         newIsPersistent && !isPersistent) {
+          // When knowing the blocks value is changing, assign instance
+          // value to skip reset in subsequent `componentDidUpdate`.
+          if (newBlocks !== blocks) {
+            _this.isSyncingOutcomingValue = true;
+          }
+
           blocks = newBlocks;
           isPersistent = newIsPersistent;
-          _this.isSyncingOutcomingValue = true;
 
           if (isPersistent) {
             onChange(blocks);
@@ -19598,6 +19902,13 @@ Object(external_this_wp_hooks_["addFilter"])('blocks.getSaveContent.extraProps',
 
 
 
+
+/***/ }),
+
+/***/ 35:
+/***/ (function(module, exports) {
+
+(function() { module.exports = this["wp"]["blob"]; }());
 
 /***/ }),
 
@@ -20994,51 +21305,7 @@ else {}
  * LICENSE file in the root directory of this source tree.
  */
 
-// This method of obtaining a reference to the global object needs to be
-// kept identical to the way it is obtained in runtime.js
-var g = (function() {
-  return this || (typeof self === "object" && self);
-})() || Function("return this")();
-
-// Use `getOwnPropertyNames` because not all browsers support calling
-// `hasOwnProperty` on the global `self` object in a worker. See #183.
-var hadRuntime = g.regeneratorRuntime &&
-  Object.getOwnPropertyNames(g).indexOf("regeneratorRuntime") >= 0;
-
-// Save the old regeneratorRuntime in case it needs to be restored later.
-var oldRuntime = hadRuntime && g.regeneratorRuntime;
-
-// Force reevalutation of runtime.js.
-g.regeneratorRuntime = undefined;
-
-module.exports = __webpack_require__(55);
-
-if (hadRuntime) {
-  // Restore the original runtime.
-  g.regeneratorRuntime = oldRuntime;
-} else {
-  // Remove the global property added by runtime.js.
-  try {
-    delete g.regeneratorRuntime;
-  } catch(e) {
-    g.regeneratorRuntime = undefined;
-  }
-}
-
-
-/***/ }),
-
-/***/ 55:
-/***/ (function(module, exports) {
-
-/**
- * Copyright (c) 2014-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-!(function(global) {
+var runtime = (function (exports) {
   "use strict";
 
   var Op = Object.prototype;
@@ -21048,23 +21315,6 @@ if (hadRuntime) {
   var iteratorSymbol = $Symbol.iterator || "@@iterator";
   var asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator";
   var toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
-
-  var inModule = typeof module === "object";
-  var runtime = global.regeneratorRuntime;
-  if (runtime) {
-    if (inModule) {
-      // If regeneratorRuntime is defined globally and we're in a module,
-      // make the exports object identical to regeneratorRuntime.
-      module.exports = runtime;
-    }
-    // Don't bother evaluating the rest of this file if the runtime was
-    // already defined globally.
-    return;
-  }
-
-  // Define the runtime globally (as expected by generated code) as either
-  // module.exports (if we're in a module) or a new, empty object.
-  runtime = global.regeneratorRuntime = inModule ? module.exports : {};
 
   function wrap(innerFn, outerFn, self, tryLocsList) {
     // If outerFn provided and outerFn.prototype is a Generator, then outerFn.prototype instanceof Generator.
@@ -21078,7 +21328,7 @@ if (hadRuntime) {
 
     return generator;
   }
-  runtime.wrap = wrap;
+  exports.wrap = wrap;
 
   // Try/catch helper to minimize deoptimizations. Returns a completion
   // record like context.tryEntries[i].completion. This interface could
@@ -21149,7 +21399,7 @@ if (hadRuntime) {
     });
   }
 
-  runtime.isGeneratorFunction = function(genFun) {
+  exports.isGeneratorFunction = function(genFun) {
     var ctor = typeof genFun === "function" && genFun.constructor;
     return ctor
       ? ctor === GeneratorFunction ||
@@ -21159,7 +21409,7 @@ if (hadRuntime) {
       : false;
   };
 
-  runtime.mark = function(genFun) {
+  exports.mark = function(genFun) {
     if (Object.setPrototypeOf) {
       Object.setPrototypeOf(genFun, GeneratorFunctionPrototype);
     } else {
@@ -21176,7 +21426,7 @@ if (hadRuntime) {
   // `yield regeneratorRuntime.awrap(x)`, so that the runtime can test
   // `hasOwn.call(value, "__await")` to determine if the yielded value is
   // meant to be awaited.
-  runtime.awrap = function(arg) {
+  exports.awrap = function(arg) {
     return { __await: arg };
   };
 
@@ -21251,17 +21501,17 @@ if (hadRuntime) {
   AsyncIterator.prototype[asyncIteratorSymbol] = function () {
     return this;
   };
-  runtime.AsyncIterator = AsyncIterator;
+  exports.AsyncIterator = AsyncIterator;
 
   // Note that simple async functions are implemented on top of
   // AsyncIterator objects; they just return a Promise for the value of
   // the final result produced by the iterator.
-  runtime.async = function(innerFn, outerFn, self, tryLocsList) {
+  exports.async = function(innerFn, outerFn, self, tryLocsList) {
     var iter = new AsyncIterator(
       wrap(innerFn, outerFn, self, tryLocsList)
     );
 
-    return runtime.isGeneratorFunction(outerFn)
+    return exports.isGeneratorFunction(outerFn)
       ? iter // If outerFn is a generator, return the full iterator.
       : iter.next().then(function(result) {
           return result.done ? result.value : iter.next();
@@ -21358,7 +21608,8 @@ if (hadRuntime) {
       context.delegate = null;
 
       if (context.method === "throw") {
-        if (delegate.iterator.return) {
+        // Note: ["return"] must be used for ES3 parsing compatibility.
+        if (delegate.iterator["return"]) {
           // If the delegate iterator has a return method, give it a
           // chance to clean up.
           context.method = "return";
@@ -21478,7 +21729,7 @@ if (hadRuntime) {
     this.reset(true);
   }
 
-  runtime.keys = function(object) {
+  exports.keys = function(object) {
     var keys = [];
     for (var key in object) {
       keys.push(key);
@@ -21539,7 +21790,7 @@ if (hadRuntime) {
     // Return an iterator with no values.
     return { next: doneResult };
   }
-  runtime.values = values;
+  exports.values = values;
 
   function doneResult() {
     return { value: undefined, done: true };
@@ -21744,19 +21995,40 @@ if (hadRuntime) {
       return ContinueSentinel;
     }
   };
-})(
-  // In sloppy mode, unbound `this` refers to the global object, fallback to
-  // Function constructor if we're in global strict mode. That is sadly a form
-  // of indirect eval which violates Content Security Policy.
-  (function() {
-    return this || (typeof self === "object" && self);
-  })() || Function("return this")()
-);
+
+  // Regardless of whether this script is executing as a CommonJS module
+  // or not, return the runtime object so that we can declare the variable
+  // regeneratorRuntime in the outer scope, which allows this module to be
+  // injected easily by `bin/regenerator --include-runtime script.js`.
+  return exports;
+
+}(
+  // If this script is executing as a CommonJS module, use module.exports
+  // as the regeneratorRuntime namespace. Otherwise create a new empty
+  // object. Either way, the resulting object will be used to initialize
+  // the regeneratorRuntime variable at the top of this file.
+   true ? module.exports : undefined
+));
+
+try {
+  regeneratorRuntime = runtime;
+} catch (accidentalStrictMode) {
+  // This module should not be running in strict mode, so the above
+  // assignment should always work unless something is misconfigured. Just
+  // in case runtime.js accidentally runs in strict mode, we can escape
+  // strict mode using a global Function call. This could conceivably fail
+  // if a Content Security Policy forbids using Function, but in that case
+  // the proper solution is to fix the accidental strict mode problem. If
+  // you've misconfigured your bundler to force strict mode and applied a
+  // CSP to forbid Function, and you're not willing to fix either of those
+  // problems, please detail your unique predicament in a GitHub issue.
+  Function("r", "regeneratorRuntime = r")(runtime);
+}
 
 
 /***/ }),
 
-/***/ 57:
+/***/ 56:
 /***/ (function(module, exports) {
 
 (function() { module.exports = this["wp"]["htmlEntities"]; }());
@@ -21770,7 +22042,7 @@ if (hadRuntime) {
 
 /***/ }),
 
-/***/ 61:
+/***/ 60:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21883,7 +22155,7 @@ module.exports = refx;
 
 /***/ }),
 
-/***/ 89:
+/***/ 88:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21896,9 +22168,11 @@ module.exports = refx;
 
 
 
-var ReactPropTypesSecret = __webpack_require__(90);
+var ReactPropTypesSecret = __webpack_require__(89);
 
 function emptyFunction() {}
+function emptyFunctionWithReset() {}
+emptyFunctionWithReset.resetWarningCache = emptyFunction;
 
 module.exports = function() {
   function shim(props, propName, componentName, location, propFullName, secret) {
@@ -21932,20 +22206,43 @@ module.exports = function() {
     any: shim,
     arrayOf: getShim,
     element: shim,
+    elementType: shim,
     instanceOf: getShim,
     node: shim,
     objectOf: getShim,
     oneOf: getShim,
     oneOfType: getShim,
     shape: getShim,
-    exact: getShim
+    exact: getShim,
+
+    checkPropTypes: emptyFunctionWithReset,
+    resetWarningCache: emptyFunction
   };
 
-  ReactPropTypes.checkPropTypes = emptyFunction;
   ReactPropTypes.PropTypes = ReactPropTypes;
 
   return ReactPropTypes;
 };
+
+
+/***/ }),
+
+/***/ 89:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+
+
+var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
+
+module.exports = ReactPropTypesSecret;
 
 
 /***/ }),
@@ -21973,27 +22270,7 @@ function _createClass(Constructor, protoProps, staticProps) {
 
 /***/ }),
 
-/***/ 90:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-
-
-var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
-
-module.exports = ReactPropTypesSecret;
-
-
-/***/ }),
-
-/***/ 97:
+/***/ 96:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22024,7 +22301,7 @@ exports.default = multi;
 
 /***/ }),
 
-/***/ 98:
+/***/ 97:
 /***/ (function(module, exports) {
 
 (function() { module.exports = this["wp"]["wordcount"]; }());
