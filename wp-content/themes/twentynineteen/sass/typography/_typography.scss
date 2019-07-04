@@ -8,7 +8,7 @@ body {
 	-moz-osx-font-smoothing: grayscale;
 	color: $color__text-main;
 	@include font-family( $font__body );
-	font-weight: 400;
+	font-weight: 500;
 	font-size: 1em;
 	line-height: $font__line-height-body;
 	margin: 0;
@@ -22,7 +22,7 @@ optgroup,
 textarea {
 	color: $color__text-main;
 	@include font-family( $font__body );
-	font-weight: 400;
+	font-weight: 500;
 	line-height: $font__line-height-body;
 	text-rendering: optimizeLegibility;
 }

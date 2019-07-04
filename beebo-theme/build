@@ -10,7 +10,10 @@ mkdir -p pkg/beebo
 ( echo "@charset 'UTF-8';" ; echo "/*" ; echo "Theme Name: Beebo" ; echo "Template: twentynineteen" ; echo "*/" ; cat ../wp-content/themes/twentynineteen/style.css | grep -v "^@charset" ) > pkg/beebo/style.css
 cp src/functions.php pkg/beebo
 
-cp -a src/font pkg/beebo
+mkdir -p pkg/beebo/font/finlandica
+cp src/font/finlandica/* pkg/beebo/font/finlandica
+mkdir -p pkg/beebo/font/vollkorn
+cp src/font/vollkorn/Vollkorn-{Medium,MediumItalic,Bold,BoldItalic}* pkg/beebo/font/vollkorn
 
 rm -rf beebo.zip
 

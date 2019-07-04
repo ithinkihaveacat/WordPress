@@ -1,20 +1,25 @@
-$fontface_url_prefix: "font/finlandica";
+$fontface_url_prefix: "font";
 
+/* Adapted from https://toolbox.finland.fi/wp-content/uploads/sites/2/2015/09/finlandica-2018.zip */
 @font-face {
   font-family: "finlandica";
-  src: url("#{$fontface_url_prefix}/finlandica-boldWeb.woff2") format("woff2"),
-    url("#{$fontface_url_prefix}/finlandica-boldWeb.woff") format("woff"),
-    url("#{$fontface_url_prefix}/finlandica-boldWeb.ttf") format("truetype");
+  src: url("#{$fontface_url_prefix}/finlandica/finlandica-boldWeb.woff2")
+      format("woff2"),
+    url("#{$fontface_url_prefix}/finlandica/finlandica-boldWeb.woff")
+      format("woff"),
+    url("#{$fontface_url_prefix}/finlandica/finlandica-boldWeb.ttf")
+      format("truetype");
   font-weight: bold;
   font-style: normal;
 }
 
 @font-face {
   font-family: "finlandica";
-  src: url("#{$fontface_url_prefix}/finlandica-bolditalicWeb.woff2")
+  src: url("#{$fontface_url_prefix}/finlandica/finlandica-bolditalicWeb.woff2")
       format("woff2"),
-    url("#{$fontface_url_prefix}/finlandica-bolditalicWeb.woff") format("woff"),
-    url("#{$fontface_url_prefix}/finlandica-bolditalicWeb.ttf")
+    url("#{$fontface_url_prefix}/finlandica/finlandica-bolditalicWeb.woff")
+      format("woff"),
+    url("#{$fontface_url_prefix}/finlandica/finlandica-bolditalicWeb.ttf")
       format("truetype");
   font-weight: bold;
   font-style: italic;
@@ -22,19 +27,144 @@ $fontface_url_prefix: "font/finlandica";
 
 @font-face {
   font-family: "finlandica";
-  src: url("#{$fontface_url_prefix}/finlandica-italicWeb.woff2") format("woff2"),
-    url("#{$fontface_url_prefix}/finlandica-italicWeb.woff") format("woff"),
-    url("#{$fontface_url_prefix}/finlandica-italicWeb.ttf") format("truetype");
+  src: url("#{$fontface_url_prefix}/finlandica/finlandica-italicWeb.woff2")
+      format("woff2"),
+    url("#{$fontface_url_prefix}/finlandica/finlandica-italicWeb.woff")
+      format("woff"),
+    url("#{$fontface_url_prefix}/finlandica/finlandica-italicWeb.ttf")
+      format("truetype");
   font-weight: normal;
   font-style: italic;
 }
 
 @font-face {
   font-family: "finlandica";
-  src: url("#{$fontface_url_prefix}/finlandica-regularWeb.woff2")
+  src: url("#{$fontface_url_prefix}/finlandica/finlandica-regularWeb.woff2")
       format("woff2"),
-    url("#{$fontface_url_prefix}/finlandica-regularWeb.woff") format("woff"),
-    url("#{$fontface_url_prefix}/finlandica-regularWeb.ttf") format("truetype");
+    url("#{$fontface_url_prefix}/finlandica/finlandica-regularWeb.woff")
+      format("woff"),
+    url("#{$fontface_url_prefix}/finlandica/finlandica-regularWeb.ttf")
+      format("truetype");
   font-weight: normal;
+  font-style: normal;
+}
+
+/* Adapted from http://vollkorn-typeface.com/style.css */
+@font-face {
+  font-family: "vollkorn";
+  src: url("#{$fontface_url_prefix}/vollkorn/Vollkorn-Italic.woff2")
+    format("woff2");
+  src: url("#{$fontface_url_prefix}/vollkorn/Vollkorn-Italic.woff")
+    format("woff");
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "vollkorn";
+  src: url("#{$fontface_url_prefix}/vollkorn/Vollkorn-MediumItalic.woff2")
+    format("woff2");
+  src: url("#{$fontface_url_prefix}/vollkorn/Vollkorn-MediumItalic.woff")
+    format("woff");
+  font-weight: 500;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "vollkorn";
+  src: url("#{$fontface_url_prefix}/vollkorn/Vollkorn-SemiBoldItalic.woff2")
+    format("woff2");
+  src: url("#{$fontface_url_prefix}/vollkorn/Vollkorn-SemiBoldItalic.woff")
+    format("woff");
+  font-weight: 600;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "vollkorn";
+  src: url("#{$fontface_url_prefix}/vollkorn/Vollkorn-BoldItalic.woff2")
+    format("woff2");
+  src: url("#{$fontface_url_prefix}/vollkorn/Vollkorn-BoldItalic.woff")
+    format("woff");
+  font-weight: 700;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "vollkorn";
+  src: url("#{$fontface_url_prefix}/vollkorn/Vollkorn-ExtraBoldItalic.woff2")
+    format("woff2");
+  src: url("#{$fontface_url_prefix}/vollkorn/Vollkorn-ExtraBoldItalic.woff")
+    format("woff");
+  font-weight: 800;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "vollkorn";
+  src: url("#{$fontface_url_prefix}/vollkorn/Vollkorn-BlackItalic.woff2")
+    format("woff2");
+  src: url("#{$fontface_url_prefix}/vollkorn/Vollkorn-BlackItalic.woff")
+    format("woff");
+  font-weight: 900;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "vollkorn";
+  src: url("#{$fontface_url_prefix}/vollkorn/Vollkorn-Regular.woff2")
+    format("woff2");
+  src: url("#{$fontface_url_prefix}/vollkorn/Vollkorn-Regular.woff")
+    format("woff");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "vollkorn";
+  src: url("#{$fontface_url_prefix}/vollkorn/Vollkorn-Medium.woff2")
+    format("woff2");
+  src: url("#{$fontface_url_prefix}/vollkorn/Vollkorn-Medium.woff")
+    format("woff");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "vollkorn";
+  src: url("#{$fontface_url_prefix}/vollkorn/Vollkorn-SemiBold.woff2")
+    format("woff2");
+  src: url("#{$fontface_url_prefix}/vollkorn/Vollkorn-SemiBold.woff")
+    format("woff");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "vollkorn";
+  src: url("#{$fontface_url_prefix}/vollkorn/Vollkorn-Bold.woff2")
+    format("woff2");
+  src: url("#{$fontface_url_prefix}/vollkorn/Vollkorn-Bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "vollkorn";
+  src: url("#{$fontface_url_prefix}/vollkorn/Vollkorn-ExtraBold.woff2")
+    format("woff2");
+  src: url("#{$fontface_url_prefix}/vollkorn/Vollkorn-ExtraBold.woff")
+    format("woff");
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "vollkorn";
+  src: url("#{$fontface_url_prefix}/vollkorn/Vollkorn-Black.woff2")
+    format("woff2");
+  src: url("#{$fontface_url_prefix}/vollkorn/Vollkorn-Black.woff")
+    format("woff");
+  font-weight: 900;
   font-style: normal;
 }
