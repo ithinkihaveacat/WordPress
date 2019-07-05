@@ -1622,10 +1622,10 @@ class wpdb {
 
 				/*
 				 * It's possible ext/mysqli is misconfigured. Fall back to ext/mysql if:
-				  *  - We haven't previously connected, and
-				  *  - WP_USE_EXT_MYSQL isn't set to false, and
-				  *  - ext/mysql is loaded.
-				  */
+				 *  - We haven't previously connected, and
+				 *  - WP_USE_EXT_MYSQL isn't set to false, and
+				 *  - ext/mysql is loaded.
+				 */
 				$attempt_fallback = true;
 
 				if ( $this->has_connected ) {
@@ -1669,8 +1669,8 @@ class wpdb {
 
 			$message .= "<ul>\n";
 			$message .= '<li>' . __( 'Are you sure you have the correct username and password?' ) . "</li>\n";
-			$message .= '<li>' . __( 'Are you sure that you have typed the correct hostname?' ) . "</li>\n";
-			$message .= '<li>' . __( 'Are you sure that the database server is running?' ) . "</li>\n";
+			$message .= '<li>' . __( 'Are you sure you have typed the correct hostname?' ) . "</li>\n";
+			$message .= '<li>' . __( 'Are you sure the database server is running?' ) . "</li>\n";
 			$message .= "</ul>\n";
 
 			$message .= '<p>' . sprintf(
@@ -1827,8 +1827,8 @@ class wpdb {
 		) . "</p>\n";
 
 		$message .= "<ul>\n";
-		$message .= '<li>' . __( 'Are you sure that the database server is running?' ) . "</li>\n";
-		$message .= '<li>' . __( 'Are you sure that the database server is not under particularly heavy load?' ) . "</li>\n";
+		$message .= '<li>' . __( 'Are you sure the database server is running?' ) . "</li>\n";
+		$message .= '<li>' . __( 'Are you sure the database server is not under particularly heavy load?' ) . "</li>\n";
 		$message .= "</ul>\n";
 
 		$message .= '<p>' . sprintf(
