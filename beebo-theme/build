@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 pushd ../wp-content/themes/twentynineteen
-npm install && npm run build:style
+npm ci && npm run build:style
 popd
 
 rm -rf pkg
