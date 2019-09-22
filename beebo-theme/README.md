@@ -56,6 +56,9 @@ Upload the `beebo.zip` as generated in (1) via [Add
 Themes](http://localhost:8000/wp-admin/theme-install.php?browse=featured) and
 activate it.
 
+Note: if updating the theme, you may have to remove it first via
+<http://localhost:8000/wp-admin/themes.php?theme=beebo>.
+
 ### Extract the transformed and manipulated CSS
 
 Load <http://localhost:8000/> and copy the CSS from the `<style amp-custom>...</style>`.
