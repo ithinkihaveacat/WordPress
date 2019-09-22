@@ -93,3 +93,7 @@ docker-compose down
   * For example, [`class-amp-core-theme-sanitizer.php`](https://github.com/ampproject/amp-wp/blob/develop/includes/sanitizers/class-amp-core-theme-sanitizer.php), [`class-amp-style-sanitizer.php`](https://github.com/ampproject/amp-wp/blob/develop/includes/sanitizers/class-amp-style-sanitizer.php).
 * **Trouble debugging?** See [I make changes and nothing happens](https://wordpress.org/support/article/i-make-changes-and-nothing-happens/).
 * **[Finding Your CSS Styles](https://codex.wordpress.org/Finding_Your_CSS_Styles)**
+* Since running `./build` will create a new
+  `wp-content/themes/twentynineteen/style.css`, while developing it may be
+  useful to get git to ignore any (local) changes to this file via `git
+  update-index --skip-worktree wp-content/themes/twentynineteen/style.css`.
