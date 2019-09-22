@@ -451,16 +451,13 @@ module.exports = Region;
  * @augments Backbone.Model
  * @mixin
  * @mixes Backbone.Events
- *
- * @param {Array} states
  */
-var StateMachine = function( states ) {
-	// @todo This is dead code. The states collection gets created in media.view.Frame._createStates.
-	this.states = new Backbone.Collection( states );
+var StateMachine = function() {
+	return {
+		// Use Backbone's self-propagating `extend` inheritance method.
+		extend: Backbone.Model.extend
+	};
 };
-
-// Use Backbone's self-propagating `extend` inheritance method.
-StateMachine.extend = Backbone.Model.extend;
 
 _.extend( StateMachine.prototype, Backbone.Events,/** @lends wp.media.controller.StateMachine.prototype */{
 	/**
@@ -2903,6 +2900,7 @@ module.exports = Frame;
 /***/ (function(module, exports) {
 
 var Frame = wp.media.view.Frame,
+	l10n = wp.media.view.l10n,
 	$ = jQuery,
 	MediaFrame;
 
@@ -2936,7 +2934,7 @@ MediaFrame = Frame.extend(/** @lends wp.media.view.MediaFrame.prototype */{
 		Frame.prototype.initialize.apply( this, arguments );
 
 		_.defaults( this.options, {
-			title:    '',
+			title:    l10n.mediaFrameDefaultTitle,
 			modal:    true,
 			uploader: true
 		});
@@ -4598,7 +4596,7 @@ var FocusManager = wp.media.View.extend(/** @lends wp.media.view.FocusManager.pr
 	 * in Safari 11.1 and support is spotty in other browsers. In the future we
 	 * should consider to remove this helper function and only use `aria-modal="true"`.
 	 *
-	 * @since 5.3.0
+	 * @since 5.2.3
 	 *
 	 * @param {object} visibleElement The jQuery object representing the element that should not be hidden.
 	 *
@@ -4637,7 +4635,7 @@ var FocusManager = wp.media.View.extend(/** @lends wp.media.view.FocusManager.pr
 	 * Makes visible again to assistive technologies all body children
 	 * previously hidden and stored in this.ariaHiddenElements.
 	 *
-	 * @since 5.3.0
+	 * @since 5.2.3
 	 *
 	 * @returns {void}
 	 */
@@ -4653,7 +4651,7 @@ var FocusManager = wp.media.View.extend(/** @lends wp.media.view.FocusManager.pr
 	/**
 	 * Determines if the passed element should not be hidden from assistive technologies.
 	 *
-	 * @since 5.3.0
+	 * @since 5.2.3
 	 *
 	 * @param {object} element The DOM element that should be checked.
 	 *
@@ -4678,7 +4676,7 @@ var FocusManager = wp.media.View.extend(/** @lends wp.media.view.FocusManager.pr
 	/**
 	 * Whether the body children are hidden from assistive technologies.
 	 *
-	 * @since 5.3.0
+	 * @since 5.2.3
 	 */
 	isBodyAriaHidden: false,
 
@@ -4686,7 +4684,7 @@ var FocusManager = wp.media.View.extend(/** @lends wp.media.view.FocusManager.pr
 	 * Stores an array of DOM elements that should be hidden from assistive
 	 * technologies, for example when the media modal dialog opens.
 	 *
-	 * @since 5.3.0
+	 * @since 5.2.3
 	 */
 	ariaHiddenElements: []
 });
@@ -5305,10 +5303,13 @@ UploaderStatus = View.extend(/** @lends wp.media.view.UploaderStatus.prototype *
 	 * @param {Backbone.Model} error
 	 */
 	error: function( error ) {
-		this.views.add( '.upload-errors', new wp.media.view.UploaderStatusError({
-			filename: this.filename( error.get('file').name ),
-			message:  error.get('message')
-		}), { at: 0 });
+		var statusError = new wp.media.view.UploaderStatusError( {
+			filename: this.filename( error.get( 'file' ).name ),
+			message:  error.get( 'message' )
+		} );
+
+		// Can show additional info here while retrying to create image sub-sizes.
+		this.views.add( '.upload-errors', statusError, { at: 0 } );
 	},
 
 	dismiss: function() {
@@ -6243,7 +6244,7 @@ Attachment = View.extend(/** @lends wp.media.view.Attachment.prototype */{
 			this.details( this.model, this.controller.state().get('selection') );
 		}
 
-		this.listenTo( this.controller, 'attachment:compat:waiting attachment:compat:ready', this.updateSave );
+		this.listenTo( this.controller.states, 'attachment:compat:waiting attachment:compat:ready', this.updateSave );
 	},
 	/**
 	 * @returns {wp.media.view.Attachment} Returns itself to allow chaining
@@ -7838,7 +7839,7 @@ AttachmentsBrowser = View.extend(/** @lends wp.media.view.AttachmentsBrowser.pro
 				disabled: true,
 				text: mediaTrash ? l10n.trashSelected : l10n.deletePermanently,
 				controller: this.controller,
-				priority: -60,
+				priority: -80,
 				click: function() {
 					var changed = [], removed = [],
 						selection = this.controller.state().get( 'selection' ),
@@ -7894,7 +7895,7 @@ AttachmentsBrowser = View.extend(/** @lends wp.media.view.AttachmentsBrowser.pro
 			if ( mediaTrash ) {
 				this.toolbar.set( 'deleteSelectedPermanentlyButton', new wp.media.view.DeleteSelectedPermanentlyButton({
 					filters: Filters,
-					style: 'primary',
+					style: 'link button-link-delete',
 					disabled: true,
 					text: l10n.deletePermanently,
 					controller: this.controller,

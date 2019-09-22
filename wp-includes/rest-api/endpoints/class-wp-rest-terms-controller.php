@@ -184,7 +184,7 @@ class WP_REST_Terms_Controller extends WP_REST_Controller {
 			'slug'       => 'slug',
 		);
 
-		$prepared_args = array();
+		$prepared_args = array( 'taxonomy' => $this->taxonomy );
 
 		/*
 		 * For each known parameter which is both registered and present in the request,
@@ -249,7 +249,7 @@ class WP_REST_Terms_Controller extends WP_REST_Controller {
 			// Used when calling wp_count_terms() below.
 			$prepared_args['object_ids'] = $prepared_args['post'];
 		} else {
-			$query_result = get_terms( $this->taxonomy, $prepared_args );
+			$query_result = get_terms( $prepared_args );
 		}
 
 		$count_args = $prepared_args;
@@ -468,7 +468,7 @@ class WP_REST_Terms_Controller extends WP_REST_Controller {
 			return $fields_update;
 		}
 
-		$request->set_param( 'context', 'view' );
+		$request->set_param( 'context', 'edit' );
 
 		/**
 		 * Fires after a single term is completely created or updated via the REST API.
@@ -570,7 +570,7 @@ class WP_REST_Terms_Controller extends WP_REST_Controller {
 			return $fields_update;
 		}
 
-		$request->set_param( 'context', 'view' );
+		$request->set_param( 'context', 'edit' );
 
 		/** This action is documented in wp-includes/rest-api/endpoints/class-wp-rest-terms-controller.php */
 		do_action( "rest_after_insert_{$this->taxonomy}", $term, $request, false );
@@ -856,6 +856,10 @@ class WP_REST_Terms_Controller extends WP_REST_Controller {
 	 * @return array Item schema data.
 	 */
 	public function get_item_schema() {
+		if ( $this->schema ) {
+			return $this->add_additional_fields_schema( $this->schema );
+		}
+
 		$schema = array(
 			'$schema'    => 'http://json-schema.org/draft-04/schema#',
 			'title'      => 'post_tag' === $this->taxonomy ? 'tag' : $this->taxonomy,
@@ -924,7 +928,8 @@ class WP_REST_Terms_Controller extends WP_REST_Controller {
 
 		$schema['properties']['meta'] = $this->meta->get_field_schema();
 
-		return $this->add_additional_fields_schema( $schema );
+		$this->schema = $schema;
+		return $this->add_additional_fields_schema( $this->schema );
 	}
 
 	/**

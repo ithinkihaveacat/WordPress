@@ -95,6 +95,8 @@ class WP_Site_Health_Auto_Updates {
 		$headers = array(
 			'Cache-Control' => 'no-cache',
 		);
+		/** This filter is documented in wp-includes/class-wp-http-streams.php */
+		$sslverify = apply_filters( 'https_local_ssl_verify', false );
 
 		// Include Basic auth in loopback requests.
 		if ( isset( $_SERVER['PHP_AUTH_USER'] ) && isset( $_SERVER['PHP_AUTH_PW'] ) ) {
@@ -108,7 +110,7 @@ class WP_Site_Health_Auto_Updates {
 			admin_url( 'site-health.php' )
 		);
 
-		$test = wp_remote_get( $url, compact( 'cookies', 'headers', 'timeout' ) );
+		$test = wp_remote_get( $url, compact( 'cookies', 'headers', 'timeout', 'sslverify' ) );
 
 		if ( is_wp_error( $test ) ) {
 			return array(
@@ -244,7 +246,7 @@ class WP_Site_Health_Auto_Updates {
 		if ( $checkout && ! apply_filters( 'automatic_updates_is_vcs_checkout', true, ABSPATH ) ) {
 			return array(
 				'description' => sprintf(
-					// translators: 1: Folder name. 2: Version control directory. 3: Filter name.
+					/* translators: 1: Folder name. 2: Version control directory. 3: Filter name. */
 					__( 'The folder %1$s was detected as being under version control (%2$s), but the %3$s filter is allowing updates.' ),
 					'<code>' . $check_dir . '</code>',
 					"<code>$vcs_dir</code>",
@@ -257,7 +259,7 @@ class WP_Site_Health_Auto_Updates {
 		if ( $checkout ) {
 			return array(
 				'description' => sprintf(
-					// translators: 1: Folder name. 2: Version control directory.
+					/* translators: 1: Folder name. 2: Version control directory. */
 					__( 'The folder %1$s was detected as being under version control (%2$s).' ),
 					'<code>' . $check_dir . '</code>',
 					"<code>$vcs_dir</code>"
@@ -340,7 +342,7 @@ class WP_Site_Health_Auto_Updates {
 
 		if ( ! $checksums ) {
 			$description = sprintf(
-				// translators: %s: WordPress version
+				/* translators: %s: WordPress version. */
 				__( "Couldn't retrieve a list of the checksums for WordPress %s." ),
 				$wp_version
 			);

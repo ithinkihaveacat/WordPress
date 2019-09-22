@@ -106,8 +106,8 @@ function ms_site_check() {
 		} else {
 			$admin_email = str_replace( '@', ' AT ', get_site_option( 'admin_email', 'support@' . get_network()->domain ) );
 			wp_die(
-				/* translators: %s: admin email link */
 				sprintf(
+					/* translators: %s: Admin email link. */
 					__( 'This site has not been activated yet. If you are having problems activating your site, please contact %s.' ),
 					sprintf( '<a href="mailto:%1$s">%1$s</a>', $admin_email )
 				)
@@ -203,12 +203,12 @@ function get_site_by_path( $domain, $path, $segments = null ) {
 	 *
 	 * @since 3.9.0
 	 *
-	 * @param null|bool|WP_Site $site     Site value to return by path.
-	 * @param string            $domain   The requested domain.
-	 * @param string            $path     The requested path, in full.
-	 * @param int|null          $segments The suggested number of paths to consult.
-	 *                                    Default null, meaning the entire path was to be consulted.
-	 * @param array             $paths    The paths to search for, based on $path and $segments.
+	 * @param null|false|WP_Site $site     Site value to return by path.
+	 * @param string             $domain   The requested domain.
+	 * @param string             $path     The requested path, in full.
+	 * @param int|null           $segments The suggested number of paths to consult.
+	 *                                     Default null, meaning the entire path was to be consulted.
+	 * @param array              $paths    The paths to search for, based on $path and $segments.
 	 */
 	$pre = apply_filters( 'pre_get_site_by_path', null, $domain, $path, $segments, $paths );
 	if ( null !== $pre ) {
@@ -475,13 +475,13 @@ function ms_not_installed( $domain, $path ) {
 	$query = $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $wpdb->site ) );
 	if ( ! $wpdb->get_var( $query ) ) {
 		$msg .= '<p>' . sprintf(
-			/* translators: %s: table name */
+			/* translators: %s: Table name. */
 			__( '<strong>Database tables are missing.</strong> This means that MySQL is not running, WordPress was not installed properly, or someone deleted %s. You really should look at your database now.' ),
 			'<code>' . $wpdb->site . '</code>'
 		) . '</p>';
 	} else {
 		$msg .= '<p>' . sprintf(
-			/* translators: 1: site url, 2: table name, 3: database name */
+			/* translators: 1: Site URL, 2: Table name, 3: Database name. */
 			__( '<strong>Could not find site %1$s.</strong> Searched for table %2$s in database %3$s. Is that right?' ),
 			'<code>' . rtrim( $domain . $path, '/' ) . '</code>',
 			'<code>' . $wpdb->blogs . '</code>',
@@ -489,10 +489,10 @@ function ms_not_installed( $domain, $path ) {
 		) . '</p>';
 	}
 	$msg .= '<p><strong>' . __( 'What do I do now?' ) . '</strong> ';
-	/* translators: %s: Codex URL */
 	$msg .= sprintf(
+		/* translators: %s: Documentation URL. */
 		__( 'Read the <a href="%s" target="_blank">bug report</a> page. Some of the guidelines there may help you figure out what went wrong.' ),
-		__( 'https://codex.wordpress.org/Debugging_a_WordPress_Network' )
+		__( 'https://wordpress.org/support/article/debugging-a-wordpress-network/' )
 	);
 	$msg .= ' ' . __( 'If you&#8217;re still stuck with this message, then check that your database contains the following tables:' ) . '</p><ul>';
 	foreach ( $wpdb->tables( 'global' ) as $t => $table ) {

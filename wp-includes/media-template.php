@@ -163,13 +163,13 @@ function wp_print_media_templates() {
 	}
 
 	$alt_text_description = sprintf(
-		/* translators: 1: link to tutorial, 2: additional link attributes, 3: accessibility text */
+		/* translators: 1: Link to tutorial, 2: Additional link attributes, 3: Accessibility text. */
 		__( '<a href="%1$s" %2$s>Describe the purpose of the image%3$s</a>. Leave empty if the image is purely decorative.' ),
 		esc_url( 'https://www.w3.org/WAI/tutorials/images/decision-tree' ),
 		'target="_blank" rel="noopener noreferrer"',
 		sprintf(
 			'<span class="screen-reader-text"> %s</span>',
-			/* translators: accessibility text */
+			/* translators: Accessibility text. */
 			__( '(opens in a new tab)' )
 		)
 	);
@@ -222,8 +222,16 @@ function wp_print_media_templates() {
 		<# } #>
 		<?php if ( ! _device_can_upload() ) : ?>
 			<div class="upload-ui">
-				<h2 class="upload-instructions"><?php _e( 'Your browseer cannot upload files' ); ?></h2>
-				<p><?php printf( __( 'The web browser on your device cannot be used to upload files. You may be able to use the <a href="%s">native app for your device</a> instead.' ), 'https://apps.wordpress.org/' ); ?></p>
+				<h2 class="upload-instructions"><?php _e( 'Your browser cannot upload files' ); ?></h2>
+				<p>
+				<?php
+					printf(
+						/* translators: %s: https://apps.wordpress.org/ */
+						__( 'The web browser on your device cannot be used to upload files. You may be able to use the <a href="%s">native app for your device</a> instead.' ),
+						'https://apps.wordpress.org/'
+					);
+				?>
+				</p>
 			</div>
 		<?php elseif ( is_multisite() && ! is_upload_space_available() ) : ?>
 			<div class="upload-ui">
@@ -266,14 +274,18 @@ function wp_print_media_templates() {
 
 				<p class="max-upload-size">
 				<?php
-					printf( __( 'Maximum upload file size: %s.' ), esc_html( size_format( $max_upload_size ) ) );
+					printf(
+						/* translators: %s: Maximum allowed file size. */
+						__( 'Maximum upload file size: %s.' ),
+						esc_html( size_format( $max_upload_size ) )
+					);
 				?>
 				</p>
 
 				<# if ( data.suggestedWidth && data.suggestedHeight ) { #>
 					<p class="suggested-dimensions">
 						<?php
-							/* translators: 1: suggested width number, 2: suggested height number. */
+							/* translators: 1: Suggested width number, 2: Suggested height number. */
 							printf( __( 'Suggested image dimensions: %1$s by %2$s pixels.' ), '{{data.suggestedWidth}}', '{{data.suggestedHeight}}' );
 						?>
 					</p>
@@ -395,7 +407,7 @@ function wp_print_media_templates() {
 					<# if ( data.width && data.height ) { #>
 						<div class="dimensions"><strong><?php _e( 'Dimensions:' ); ?></strong>
 							<?php
-							/* translators: 1: a number of pixels wide, 2: a number of pixels tall. */
+							/* translators: 1: A number of pixels wide, 2: A number of pixels tall. */
 							printf( __( '%1$s by %2$s pixels' ), '{{ data.width }}', '{{ data.height }}' );
 							?>
 						</div>
@@ -585,7 +597,7 @@ function wp_print_media_templates() {
 					<# if ( data.width && data.height ) { #>
 						<div class="dimensions">
 							<?php
-							/* translators: 1: a number of pixels wide, 2: a number of pixels tall. */
+							/* translators: 1: A number of pixels wide, 2: A number of pixels tall. */
 							printf( __( '%1$s by %2$s pixels' ), '{{ data.width }}', '{{ data.height }}' );
 							?>
 						</div>
@@ -1175,7 +1187,7 @@ function wp_print_media_templates() {
 					}
 				#>
 				<span class="setting">
-					<label for="audio-details-source" class="name"><?php _e( 'caca URL' ); ?></label>
+					<label for="audio-details-source" class="name"><?php _e( 'URL' ); ?></label>
 					<input type="text" id="audio-details-source" readonly data-setting="src" value="{{ data.model.src }}" />
 					<button type="button" class="button-link remove-setting"><?php _e( 'Remove audio source' ); ?></button>
 				</span>
@@ -1361,9 +1373,9 @@ function wp_print_media_templates() {
 					<dl class="gallery-item">
 						<dt class="gallery-icon">
 							<# if ( attachment.thumbnail ) { #>
-								<img src="{{ attachment.thumbnail.url }}" width="{{ attachment.thumbnail.width }}" height="{{ attachment.thumbnail.height }}" alt="" />
+								<img src="{{ attachment.thumbnail.url }}" width="{{ attachment.thumbnail.width }}" height="{{ attachment.thumbnail.height }}" alt="{{ attachment.alt }}" />
 							<# } else { #>
-								<img src="{{ attachment.url }}" alt="" />
+								<img src="{{ attachment.url }}" alt="{{ attachment.alt }}" />
 							<# } #>
 						</dt>
 						<# if ( attachment.caption ) { #>

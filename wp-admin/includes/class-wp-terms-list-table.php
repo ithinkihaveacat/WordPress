@@ -214,6 +214,7 @@ class WP_Terms_List_Table extends WP_List_Table {
 		$args = wp_parse_args(
 			$this->callback_args,
 			array(
+				'taxonomy'   => $taxonomy,
 				'page'       => 1,
 				'number'     => 20,
 				'search'     => '',
@@ -237,7 +238,8 @@ class WP_Terms_List_Table extends WP_List_Table {
 			$args['number'] = 0;
 			$args['offset'] = $args['number'];
 		}
-		$terms = get_terms( $taxonomy, $args );
+
+		$terms = get_terms( $args );
 
 		if ( empty( $terms ) || ! is_array( $terms ) ) {
 			echo '<tr class="no-items"><td class="colspanchange" colspan="' . $this->get_column_count() . '">';
@@ -353,8 +355,13 @@ class WP_Terms_List_Table extends WP_List_Table {
 	 */
 	public function column_cb( $tag ) {
 		if ( current_user_can( 'delete_term', $tag->term_id ) ) {
-			return '<label class="screen-reader-text" for="cb-select-' . $tag->term_id . '">' . sprintf( __( 'Select %s' ), $tag->name ) . '</label>'
-				. '<input type="checkbox" name="delete_tags[]" value="' . $tag->term_id . '" id="cb-select-' . $tag->term_id . '" />';
+			return sprintf(
+				'<label class="screen-reader-text" for="cb-select-%1$s">%2$s</label>' .
+				'<input type="checkbox" name="delete_tags[]" value="%1$s" id="cb-select-%1$s" />',
+				$tag->term_id,
+				/* translators: %s: Taxonomy term name. */
+				sprintf( __( 'Select %s' ), $tag->name )
+			);
 		}
 
 		return '&nbsp;';
@@ -399,7 +406,7 @@ class WP_Terms_List_Table extends WP_List_Table {
 			$name      = sprintf(
 				'<a class="row-title" href="%s" aria-label="%s">%s</a>',
 				esc_url( $edit_link ),
-				/* translators: %s: taxonomy term name */
+				/* translators: %s: Taxonomy term name. */
 				esc_attr( sprintf( __( '&#8220;%s&#8221; (Edit)' ), $tag->name ) ),
 				$name
 			);
@@ -461,13 +468,13 @@ class WP_Terms_List_Table extends WP_List_Table {
 			$actions['edit'] = sprintf(
 				'<a href="%s" aria-label="%s">%s</a>',
 				esc_url( $edit_link ),
-				/* translators: %s: taxonomy term name */
+				/* translators: %s: Taxonomy term name. */
 				esc_attr( sprintf( __( 'Edit &#8220;%s&#8221;' ), $tag->name ) ),
 				__( 'Edit' )
 			);
 			$actions['inline hide-if-no-js'] = sprintf(
 				'<button type="button" class="button-link editinline" aria-label="%s" aria-expanded="false">%s</button>',
-				/* translators: %s: taxonomy term name */
+				/* translators: %s: Taxonomy term name. */
 				esc_attr( sprintf( __( 'Quick edit &#8220;%s&#8221; inline' ), $tag->name ) ),
 				__( 'Quick&nbsp;Edit' )
 			);
@@ -476,7 +483,7 @@ class WP_Terms_List_Table extends WP_List_Table {
 			$actions['delete'] = sprintf(
 				'<a href="%s" class="delete-tag aria-button-if-js" aria-label="%s">%s</a>',
 				wp_nonce_url( "edit-tags.php?action=delete&amp;taxonomy=$taxonomy&amp;tag_ID=$tag->term_id", 'delete-tag_' . $tag->term_id ),
-				/* translators: %s: taxonomy term name */
+				/* translators: %s: Taxonomy term name. */
 				esc_attr( sprintf( __( 'Delete &#8220;%s&#8221;' ), $tag->name ) ),
 				__( 'Delete' )
 			);
@@ -485,7 +492,7 @@ class WP_Terms_List_Table extends WP_List_Table {
 			$actions['view'] = sprintf(
 				'<a href="%s" aria-label="%s">%s</a>',
 				get_term_link( $tag ),
-				/* translators: %s: taxonomy term name */
+				/* translators: %s: Taxonomy term name. */
 				esc_attr( sprintf( __( 'View &#8220;%s&#8221; archive' ), $tag->name ) ),
 				__( 'View' )
 			);

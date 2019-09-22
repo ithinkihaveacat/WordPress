@@ -88,7 +88,7 @@ $step = isset( $_GET['step'] ) ? (int) $_GET['step'] : -1;
  * @since 2.3.0
  *
  * @global string    $wp_local_package
- * @global WP_Locale $wp_locale
+ * @global WP_Locale $wp_locale        WordPress date and time locale object.
  *
  * @param string|array $body_classes
  */
@@ -169,16 +169,16 @@ switch ( $step ) {
 </ol>
 <p>
 		<?php
-		/* translators: %s: wp-config.php */
 		printf(
+			/* translators: %s: wp-config.php */
 			__( 'We&#8217;re going to use this information to create a %s file.' ),
 			'<code>wp-config.php</code>'
 		);
 		?>
 	<strong>
 		<?php
-		/* translators: 1: wp-config-sample.php, 2: wp-config.php */
 		printf(
+			/* translators: 1: wp-config-sample.php, 2: wp-config.php */
 			__( 'If for any reason this automatic file creation doesn&#8217;t work, don&#8217;t worry. All this does is fill in the database information to a configuration file. You may also simply open %1$s in a text editor, fill in your information, and save it as %2$s.' ),
 			'<code>wp-config-sample.php</code>',
 			'<code>wp-config.php</code>'
@@ -186,10 +186,10 @@ switch ( $step ) {
 		?>
 	</strong>
 		<?php
-		/* translators: %s: Codex URL */
 		printf(
+			/* translators: %s: Documentation URL. */
 			__( 'Need more help? <a href="%s">We got it</a>.' ),
-			__( 'https://codex.wordpress.org/Editing_wp-config.php' )
+			__( 'https://wordpress.org/support/article/editing-wp-config-php/' )
 		);
 		?>
 </p>

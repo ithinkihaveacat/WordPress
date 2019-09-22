@@ -460,6 +460,12 @@ code {
 	white-space: nowrap;
 }
 
+.wp-die-message {
+	font-size: 13px;
+	line-height: 1.5;
+	margin: 1em 0;
+}
+
 /* .widefat - main style for tables */
 .widefat {
 	border-spacing: 0;
@@ -3084,7 +3090,6 @@ img {
 	font-size: 13px;
 	background: #f9f9f9;
 	-moz-tab-size: 4;
-	-o-tab-size: 4;
 	tab-size: 4;
 }
 
@@ -3791,6 +3796,8 @@ img {
 
 	code {
 		word-wrap: break-word;
+		word-wrap: anywhere; /* Firefox. Allow breaking long words anywhere */
+		word-break: break-word; /* Webkit: Treated similarly to word-wrap: break-word */
 	}
 
 	/* General Metabox */
@@ -4034,6 +4041,10 @@ img {
 	.nav-tab-active:focus,
 	.nav-tab-active:focus:active {
 		border-bottom: 1px solid #ccc;
+	}
+
+	.wp-filter .search-form input[type="search"] {
+		width: 100%;
 	}
 }
 

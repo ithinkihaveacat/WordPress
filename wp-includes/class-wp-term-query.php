@@ -326,6 +326,9 @@ class WP_Term_Query {
 					$has_hierarchical_tax = true;
 				}
 			}
+		} else {
+			// When no taxonomies are provided, assume we have to descend the tree.
+			$has_hierarchical_tax = true;
 		}
 
 		if ( ! $has_hierarchical_tax ) {
@@ -428,8 +431,8 @@ class WP_Term_Query {
 				$excluded_children = array_merge(
 					$excluded_children,
 					(array) get_terms(
-						reset( $taxonomies ),
 						array(
+							'taxonomy'   => reset( $taxonomies ),
 							'child_of'   => intval( $extrunk ),
 							'fields'     => 'ids',
 							'hide_empty' => 0,

@@ -294,8 +294,8 @@ function wp_nav_menu( $args = array() ) {
  * @access private
  * @since 3.0.0
  *
- * @global WP_Query   $wp_query
- * @global WP_Rewrite $wp_rewrite
+ * @global WP_Query   $wp_query   WordPress Query object.
+ * @global WP_Rewrite $wp_rewrite WordPress rewrite component.
  *
  * @param array $menu_items The current menu item objects to which to add the class property information.
  */
@@ -579,9 +579,8 @@ function _wp_menu_item_classes_by_context( &$menu_items ) {
  */
 function walk_nav_menu_tree( $items, $depth, $r ) {
 	$walker = ( empty( $r->walker ) ) ? new Walker_Nav_Menu : $r->walker;
-	$args   = array( $items, $depth, $r );
 
-	return call_user_func_array( array( $walker, 'walk' ), $args );
+	return $walker->walk( $items, $depth, $r );
 }
 
 /**

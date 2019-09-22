@@ -491,9 +491,7 @@ final class _WP_Editors {
 								$path = str_replace( content_url(), '', $plugurl );
 								$path = WP_CONTENT_DIR . $path . '/langs/';
 
-								if ( function_exists( 'realpath' ) ) {
-									$path = trailingslashit( realpath( $path ) );
-								}
+								$path = trailingslashit( realpath( $path ) );
 
 								if ( @is_file( $path . $mce_locale . '.js' ) ) {
 									$strings .= @file_get_contents( $path . $mce_locale . '.js' ) . "\n";
@@ -540,18 +538,24 @@ final class _WP_Editors {
 					$settings['wpeditimage_disable_captions'] = true;
 				}
 
-				$mce_css       = $settings['content_css'];
-				$editor_styles = get_editor_stylesheets();
+				$mce_css = $settings['content_css'];
 
-				if ( ! empty( $editor_styles ) ) {
-					// Force urlencoding of commas.
-					foreach ( $editor_styles as $key => $url ) {
-						if ( strpos( $url, ',' ) !== false ) {
-							$editor_styles[ $key ] = str_replace( ',', '%2C', $url );
+				// The `editor-style.css` added by the theme is generally intended for the editor instance on the Edit Post screen.
+				// Plugins that use wp_editor() on the front-end can decide whether to add the theme stylesheet
+				// by using `get_editor_stylesheets()` and the `mce_css` or `tiny_mce_before_init` filters, see below.
+				if ( is_admin() ) {
+					$editor_styles = get_editor_stylesheets();
+
+					if ( ! empty( $editor_styles ) ) {
+						// Force urlencoding of commas.
+						foreach ( $editor_styles as $key => $url ) {
+							if ( strpos( $url, ',' ) !== false ) {
+								$editor_styles[ $key ] = str_replace( ',', '%2C', $url );
+							}
 						}
-					}
 
-					$mce_css .= ',' . implode( ',', $editor_styles );
+						$mce_css .= ',' . implode( ',', $editor_styles );
+					}
 				}
 
 				/**
@@ -751,8 +755,8 @@ final class _WP_Editors {
 				$options .= $key . ':' . $val . ',';
 				continue;
 			} elseif ( ! empty( $value ) && is_string( $value ) && (
-				( '{' == $value{0} && '}' == $value{strlen( $value ) - 1} ) ||
-				( '[' == $value{0} && ']' == $value{strlen( $value ) - 1} ) ||
+				( '{' == $value[0] && '}' == $value[ strlen( $value ) - 1 ] ) ||
+				( '[' == $value[0] && ']' == $value[ strlen( $value ) - 1 ] ) ||
 				preg_match( '/^\(?function ?\(/', $value ) ) ) {
 
 				$options .= $key . ':' . $value . ',';
@@ -1041,7 +1045,7 @@ final class _WP_Editors {
 				'Heading 5'                            => array( __( 'Heading 5' ), 'access5' ),
 				'Heading 6'                            => array( __( 'Heading 6' ), 'access6' ),
 
-				/* translators: block tags */
+				/* translators: Block tags. */
 				'Blocks'                               => _x( 'Blocks', 'TinyMCE' ),
 				'Paragraph'                            => array( __( 'Paragraph' ), 'access7' ),
 				'Blockquote'                           => array( __( 'Blockquote' ), 'accessQ' ),
@@ -1179,7 +1183,7 @@ final class _WP_Editors {
 				'Could not find the specified string.' => __( 'Could not find the specified string.' ),
 				'Replace'                              => _x( 'Replace', 'find/replace' ),
 				'Next'                                 => _x( 'Next', 'find/replace' ),
-				/* translators: previous */
+				/* translators: Previous. */
 				'Prev'                                 => _x( 'Prev', 'find/replace' ),
 				'Whole words'                          => _x( 'Whole words', 'find/replace' ),
 				'Find and replace'                     => __( 'Find and replace' ),
@@ -1254,7 +1258,7 @@ final class _WP_Editors {
 				'Show blocks'                          => _x( 'Show blocks', 'editor button' ),
 				'Show invisible characters'            => __( 'Show invisible characters' ),
 
-				/* translators: word count */
+				/* translators: Word count. */
 				'Words: {0}'                           => sprintf( __( 'Words: %s' ), '{0}' ),
 				'Paste is now in plain text mode. Contents will now be pasted as plain text until you toggle this option off.' =>
 					__( 'Paste is now in plain text mode. Contents will now be pasted as plain text until you toggle this option off.' ) . "\n\n" .

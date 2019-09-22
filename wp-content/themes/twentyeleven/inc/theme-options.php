@@ -17,8 +17,8 @@
  * @param string $hook_suffix An admin page's hook suffix.
  */
 function twentyeleven_admin_enqueue_scripts( $hook_suffix ) {
-	wp_enqueue_style( 'twentyeleven-theme-options', get_template_directory_uri() . '/inc/theme-options.css', false, '2011-04-28' );
-	wp_enqueue_script( 'twentyeleven-theme-options', get_template_directory_uri() . '/inc/theme-options.js', array( 'farbtastic' ), '2011-06-10' );
+	wp_enqueue_style( 'twentyeleven-theme-options', get_template_directory_uri() . '/inc/theme-options.css', false, '20110602' );
+	wp_enqueue_script( 'twentyeleven-theme-options', get_template_directory_uri() . '/inc/theme-options.js', array( 'farbtastic' ), '20110610' );
 	wp_enqueue_style( 'farbtastic' );
 }
 add_action( 'admin_print_styles-appearance_page_theme_options', 'twentyeleven_admin_enqueue_scripts' );
@@ -103,7 +103,7 @@ function twentyeleven_theme_options_add_page() {
 		return;
 	}
 
-	add_action( "load-$theme_page", 'twentyeleven_theme_options_help' );
+	add_action( "load-{$theme_page}", 'twentyeleven_theme_options_help' );
 }
 add_action( 'admin_menu', 'twentyeleven_theme_options_add_page' );
 
@@ -118,7 +118,7 @@ function twentyeleven_theme_options_help() {
 			'<p>' . __( 'Remember to click "Save Changes" to save any changes you have made to the theme options.', 'twentyeleven' ) . '</p>';
 
 	$sidebar = '<p><strong>' . __( 'For more information:', 'twentyeleven' ) . '</strong></p>' .
-		'<p>' . __( '<a href="https://codex.wordpress.org/Appearance_Theme_Options_Screen" target="_blank">Documentation on Theme Options</a>', 'twentyeleven' ) . '</p>' .
+		'<p>' . __( '<a href="https://wordpress.org/support/article/appearance-customize-screen/" target="_blank">Documentation on Theme Options</a>', 'twentyeleven' ) . '</p>' .
 		'<p>' . __( '<a href="https://wordpress.org/support/" target="_blank">Support</a>', 'twentyeleven' ) . '</p>';
 
 	$screen = get_current_screen();
@@ -304,7 +304,7 @@ function twentyeleven_settings_field_link_color() {
 	<br />
 	<span>
 	<?php
-	/* translators: link color */
+	/* translators: %s: Link color. */
 	printf( __( 'Default color: %s', 'twentyeleven' ), '<span id="default-color">' . twentyeleven_get_default_link_color( $options['color_scheme'] ) . '</span>' );
 	?>
 	</span>
@@ -345,7 +345,7 @@ function twentyeleven_theme_options_render_page() {
 		<?php $theme_name = function_exists( 'wp_get_theme' ) ? wp_get_theme() : get_current_theme(); ?>
 		<h2>
 		<?php
-		/* translators: theme name */
+		/* translators: %s: Theme name. */
 		printf( __( '%s Theme Options', 'twentyeleven' ), $theme_name );
 		?>
 		</h2>
@@ -419,7 +419,7 @@ function twentyeleven_enqueue_color_scheme() {
 	$color_scheme = $options['color_scheme'];
 
 	if ( 'dark' == $color_scheme ) {
-		wp_enqueue_style( 'dark', get_template_directory_uri() . '/colors/dark.css', array(), null );
+		wp_enqueue_style( 'dark', get_template_directory_uri() . '/colors/dark.css', array(), '20190404' );
 	}
 
 	/**

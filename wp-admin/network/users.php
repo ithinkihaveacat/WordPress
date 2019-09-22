@@ -71,27 +71,44 @@ if ( isset( $_GET['action'] ) ) {
 							case 'spam':
 								$user = get_userdata( $user_id );
 								if ( is_super_admin( $user->ID ) ) {
-									wp_die( sprintf( __( 'Warning! User cannot be modified. The user %s is a network administrator.' ), esc_html( $user->user_login ) ) );
+									wp_die(
+										sprintf(
+											/* translators: %s: User login. */
+											__( 'Warning! User cannot be modified. The user %s is a network administrator.' ),
+											esc_html( $user->user_login )
+										)
+									);
 								}
 
 								$userfunction = 'all_spam';
 								$blogs        = get_blogs_of_user( $user_id, true );
+
 								foreach ( (array) $blogs as $details ) {
 									if ( $details->userblog_id != get_network()->site_id ) { // main blog not a spam !
 										update_blog_status( $details->userblog_id, 'spam', '1' );
 									}
 								}
-								update_user_status( $user_id, 'spam', '1' );
+
+								$user_data         = $user->to_array();
+								$user_data['spam'] = '1';
+
+								wp_update_user( $user_data );
 								break;
 
 							case 'notspam':
+								$user = get_userdata( $user_id );
+
 								$userfunction = 'all_notspam';
 								$blogs        = get_blogs_of_user( $user_id, true );
+
 								foreach ( (array) $blogs as $details ) {
 									update_blog_status( $details->userblog_id, 'spam', '0' );
 								}
 
-								update_user_status( $user_id, 'spam', '0' );
+								$user_data         = $user->to_array();
+								$user_data['spam'] = '0';
+
+								wp_update_user( $user_data );
 								break;
 						}
 					}
@@ -259,7 +276,7 @@ if ( isset( $_REQUEST['updated'] ) && $_REQUEST['updated'] == 'true' && ! empty(
 	endif;
 
 	if ( strlen( $usersearch ) ) {
-		/* translators: %s: search keywords */
+		/* translators: %s: Search query. */
 		printf( '<span class="subtitle">' . __( 'Search results for &#8220;%s&#8221;' ) . '</span>', esc_html( $usersearch ) );
 	}
 	?>
