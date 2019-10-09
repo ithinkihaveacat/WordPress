@@ -3012,35 +3012,19 @@ function _split_str_by_whitespace( $string, $goal ) {
 }
 
 /**
- * Adds rel nofollow string to all HTML A elements in content.
+ * Callback to add a rel attribute to HTML A element.
  *
- * @since 1.5.0
+ * Will remove already existing string before adding to prevent invalidating (X)HTML.
  *
- * @param string $text Content that may contain HTML A elements.
- * @return string Converted content.
+ * @since 5.3.0
+ *
+ * @param array  $matches Single match.
+ * @param string $rel     The rel attribute to add.
+ * @return string HTML A element with the added rel attribute.
  */
-function wp_rel_nofollow( $text ) {
-	// This is a pre save filter, so text is already escaped.
-	$text = stripslashes( $text );
-	$text = preg_replace_callback( '|<a (.+?)>|i', 'wp_rel_nofollow_callback', $text );
-	return wp_slash( $text );
-}
-
-/**
- * Callback to add rel=nofollow string to HTML A element.
- *
- * Will remove already existing rel="nofollow" and rel='nofollow' from the
- * string to prevent from invalidating (X)HTML.
- *
- * @since 2.3.0
- *
- * @param array $matches Single Match
- * @return string HTML A Element with rel nofollow.
- */
-function wp_rel_nofollow_callback( $matches ) {
+function wp_rel_callback( $matches, $rel ) {
 	$text = $matches[1];
 	$atts = wp_kses_hair( $matches[1], wp_allowed_protocols() );
-	$rel  = 'nofollow';
 
 	if ( ! empty( $atts['href'] ) ) {
 		if ( in_array( strtolower( wp_parse_url( $atts['href']['value'], PHP_URL_SCHEME ) ), array( 'http', 'https' ), true ) ) {
@@ -3051,11 +3035,10 @@ function wp_rel_nofollow_callback( $matches ) {
 	}
 
 	if ( ! empty( $atts['rel'] ) ) {
-		$parts = array_map( 'trim', explode( ' ', $atts['rel']['value'] ) );
-		if ( false === array_search( 'nofollow', $parts ) ) {
-			$parts[] = 'nofollow';
-		}
-		$rel = implode( ' ', $parts );
+		$parts     = array_map( 'trim', explode( ' ', $atts['rel']['value'] ) );
+		$rel_array = array_map( 'trim', explode( ' ', $rel ) );
+		$parts     = array_unique( array_merge( $parts, $rel_array ) );
+		$rel       = implode( ' ', $parts );
 		unset( $atts['rel'] );
 
 		$html = '';
@@ -3069,6 +3052,61 @@ function wp_rel_nofollow_callback( $matches ) {
 		$text = trim( $html );
 	}
 	return "<a $text rel=\"" . esc_attr( $rel ) . '">';
+}
+
+/**
+ * Adds `rel="nofollow"` string to all HTML A elements in content.
+ *
+ * @since 1.5.0
+ *
+ * @param string $text Content that may contain HTML A elements.
+ * @return string Converted content.
+ */
+function wp_rel_nofollow( $text ) {
+	// This is a pre-save filter, so text is already escaped.
+	$text = stripslashes( $text );
+	$text = preg_replace_callback(
+		'|<a (.+?)>|i',
+		function( $matches ) {
+			return wp_rel_callback( $matches, 'nofollow' );
+		},
+		$text
+	);
+	return wp_slash( $text );
+}
+
+/**
+ * Callback to add `rel="nofollow"` string to HTML A element.
+ *
+ * @since 2.3.0
+ * @deprecated 5.3.0 Use wp_rel_callback()
+ *
+ * @param array $matches Single match.
+ * @return string HTML A Element with `rel="nofollow"`.
+ */
+function wp_rel_nofollow_callback( $matches ) {
+	return wp_rel_callback( $matches, 'nofollow' );
+}
+
+/**
+ * Adds `rel="nofollow ugc"` string to all HTML A elements in content.
+ *
+ * @since 5.3.0
+ *
+ * @param string $text Content that may contain HTML A elements.
+ * @return string Converted content.
+ */
+function wp_rel_ugc( $text ) {
+	// This is a pre-save filter, so text is already escaped.
+	$text = stripslashes( $text );
+	$text = preg_replace_callback(
+		'|<a (.+?)>|i',
+		function( $matches ) {
+			return wp_rel_callback( $matches, 'nofollow ugc' );
+		},
+		$text
+	);
+	return wp_slash( $text );
 }
 
 /**
@@ -4830,6 +4868,9 @@ function wp_pre_kses_less_than_callback( $matches ) {
  * WordPress implementation of PHP sprintf() with filters.
  *
  * @since 2.5.0
+ * @since 5.3.0 Formalized the existing and already documented `...$args` parameter
+ *              by adding it to the function signature.
+ *
  * @link https://secure.php.net/sprintf
  *
  * @param string $pattern The string which formatted args are inserted.
@@ -5366,6 +5407,33 @@ function wp_unslash( $value ) {
 }
 
 /**
+ * Adds slashes to only string values in an array of values.
+ *
+ * This should be used when preparing data for core APIs that expect slashed data.
+ * This should not be used to escape data going directly into an SQL query.
+ *
+ * @since 5.3.0
+ *
+ * @param mixed $value Scalar or array of scalars.
+ * @return mixed Slashes $value
+ */
+function wp_slash_strings_only( $value ) {
+	return map_deep( $value, 'addslashes_strings_only' );
+}
+
+/**
+ * Adds slashes only if the provided value is a string.
+ *
+ * @since 5.3.0
+ *
+ * @param mixed $value
+ * @return mixed
+ */
+function addslashes_strings_only( $value ) {
+	return is_string( $value ) ? addslashes( $value ) : $value;
+}
+
+/**
  * Extract and return the first URL from passed content.
  *
  * @since 3.6.0
@@ -5555,7 +5623,7 @@ function _print_emoji_detection_script() {
 		?>
 		<script<?php echo $type_attr; ?>>
 			window._wpemojiSettings = <?php echo wp_json_encode( $settings ); ?>;
-			!function(a,b,c){function d(a,b){var c=String.fromCharCode;l.clearRect(0,0,k.width,k.height),l.fillText(c.apply(this,a),0,0);var d=k.toDataURL();l.clearRect(0,0,k.width,k.height),l.fillText(c.apply(this,b),0,0);var e=k.toDataURL();return d===e}function e(a){var b;if(!l||!l.fillText)return!1;switch(l.textBaseline="top",l.font="600 32px Arial",a){case"flag":return!(b=d([127987,65039,8205,9895,65039],[127987,65039,8203,9895,65039]))&&(!(b=d([55356,56826,55356,56819],[55356,56826,8203,55356,56819]))&&(b=d([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]),!b));case"emoji":return b=d([55357,56424,55356,57342,8205,55358,56605,8205,55357,56424,55356,57340],[55357,56424,55356,57342,8203,55358,56605,8203,55357,56424,55356,57340]),!b}return!1}function f(a){var c=b.createElement("script");c.src=a,c.defer=c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var g,h,i,j,k=b.createElement("canvas"),l=k.getContext&&k.getContext("2d");for(j=Array("flag","emoji"),c.supports={everything:!0,everythingExceptFlag:!0},i=0;i<j.length;i++)c.supports[j[i]]=e(j[i]),c.supports.everything=c.supports.everything&&c.supports[j[i]],"flag"!==j[i]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[j[i]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(h=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",h,!1),a.addEventListener("load",h,!1)):(a.attachEvent("onload",h),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),g=c.source||{},g.concatemoji?f(g.concatemoji):g.wpemoji&&g.twemoji&&(f(g.twemoji),f(g.wpemoji)))}(window,document,window._wpemojiSettings);
+			!function(e,a,t){var r,n,o,i,p=a.createElement("canvas"),s=p.getContext&&p.getContext("2d");function c(e,t){var a=String.fromCharCode;s.clearRect(0,0,p.width,p.height),s.fillText(a.apply(this,e),0,0);var r=p.toDataURL();return s.clearRect(0,0,p.width,p.height),s.fillText(a.apply(this,t),0,0),r===p.toDataURL()}function l(e){if(!s||!s.fillText)return!1;switch(s.textBaseline="top",s.font="600 32px Arial",e){case"flag":return!c([127987,65039,8205,9895,65039],[127987,65039,8203,9895,65039])&&(!c([55356,56826,55356,56819],[55356,56826,8203,55356,56819])&&!c([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]));case"emoji":return!c([55357,56424,55356,57342,8205,55358,56605,8205,55357,56424,55356,57340],[55357,56424,55356,57342,8203,55358,56605,8203,55357,56424,55356,57340])}return!1}function d(e){var t=a.createElement("script");t.src=e,t.defer=t.type="text/javascript",a.getElementsByTagName("head")[0].appendChild(t)}for(i=Array("flag","emoji"),t.supports={everything:!0,everythingExceptFlag:!0},o=0;o<i.length;o++)t.supports[i[o]]=l(i[o]),t.supports.everything=t.supports.everything&&t.supports[i[o]],"flag"!==i[o]&&(t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&t.supports[i[o]]);t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&!t.supports.flag,t.DOMReady=!1,t.readyCallback=function(){t.DOMReady=!0},t.supports.everything||(n=function(){t.readyCallback()},a.addEventListener?(a.addEventListener("DOMContentLoaded",n,!1),e.addEventListener("load",n,!1)):(e.attachEvent("onload",n),a.attachEvent("onreadystatechange",function(){"complete"===a.readyState&&t.readyCallback()})),(r=t.source||{}).concatemoji?d(r.concatemoji):r.wpemoji&&r.twemoji&&(d(r.twemoji),d(r.wpemoji)))}(window,document,window._wpemojiSettings);
 		</script>
 		<?php
 	}

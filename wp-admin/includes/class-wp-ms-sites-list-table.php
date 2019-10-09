@@ -160,6 +160,12 @@ class WP_MS_Sites_List_Table extends WP_List_Table {
 			$args['no_found_rows'] = false;
 		}
 
+		// Take into account the role the user has selected.
+		$status = isset( $_REQUEST['status'] ) ? wp_unslash( trim( $_REQUEST['status'] ) ) : '';
+		if ( in_array( $status, array( 'public', 'archived', 'mature', 'spam', 'deleted' ), true ) ) {
+			$args[ $status ] = 1;
+		}
+
 		/**
 		 * Filters the arguments for the site query in the sites list table.
 		 *
@@ -199,6 +205,81 @@ class WP_MS_Sites_List_Table extends WP_List_Table {
 	 */
 	public function no_items() {
 		_e( 'No sites found.' );
+	}
+
+	/**
+	 * Gets links to filter sites by status.
+	 *
+	 * @since 5.3.0
+	 *
+	 * @return array
+	 *
+	 */
+	protected function get_views() {
+		$counts = wp_count_sites();
+
+		$statuses = array(
+			/* translators: %s: Number of sites. */
+			'all'      => _nx_noop(
+				'All <span class="count">(%s)</span>',
+				'All <span class="count">(%s)</span>',
+				'sites'
+			),
+
+			/* translators: %s: Number of sites. */
+			'public'   => _n_noop(
+				'Public <span class="count">(%s)</span>',
+				'Public <span class="count">(%s)</span>'
+			),
+
+			/* translators: %s: Number of sites. */
+			'archived' => _n_noop(
+				'Archived <span class="count">(%s)</span>',
+				'Archived <span class="count">(%s)</span>'
+			),
+
+			/* translators: %s: Number of sites. */
+			'mature'   => _n_noop(
+				'Mature <span class="count">(%s)</span>',
+				'Mature <span class="count">(%s)</span>'
+			),
+
+			/* translators: %s: Number of sites. */
+			'spam'     => _nx_noop(
+				'Spam <span class="count">(%s)</span>',
+				'Spam <span class="count">(%s)</span>',
+				'sites'
+			),
+
+			/* translators: %s: Number of sites. */
+			'deleted'  => _n_noop(
+				'Deleted <span class="count">(%s)</span>',
+				'Deleted <span class="count">(%s)</span>'
+			),
+		);
+
+		$view_links       = array();
+		$requested_status = isset( $_REQUEST['status'] ) ? wp_unslash( trim( $_REQUEST['status'] ) ) : '';
+		$url              = 'sites.php';
+
+		foreach ( $statuses as $status => $label_count ) {
+			$current_link_attributes = $requested_status === $status || ( $requested_status === '' && 'all' === $status )
+				? ' class="current" aria-current="page"'
+				: '';
+			if ( (int) $counts[ $status ] > 0 ) {
+				$label    = sprintf( translate_nooped_plural( $label_count, $counts[ $status ] ), number_format_i18n( $counts[ $status ] ) );
+				$full_url = 'all' === $status ? $url : add_query_arg( 'status', $status, $url );
+
+				$view_links[ $status ] = sprintf(
+					'<a href="%1$s"%2$s>%3$s</a>',
+					esc_url( $full_url ),
+					$current_link_attributes,
+					$label
+				);
+			}
+		}
+
+		return $view_links;
 	}
 
 	/**
@@ -536,8 +617,9 @@ class WP_MS_Sites_List_Table extends WP_List_Table {
 
 		reset( $this->status_list );
 
+		$site_status = isset( $_REQUEST['status'] ) ? wp_unslash( trim( $_REQUEST['status'] ) ) : '';
 		foreach ( $this->status_list as $status => $col ) {
-			if ( $_site->{$status} == 1 ) {
+			if ( ( 1 === intval( $_site->{$status} ) ) && ( $site_status !== $status ) ) {
 				$site_states[ $col[0] ] = $col[1];
 			}
 		}

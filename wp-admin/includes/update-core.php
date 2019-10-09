@@ -825,6 +825,7 @@ $_new_bundled_files = array(
 	'themes/twentysixteen/'   => '4.4',
 	'themes/twentyseventeen/' => '4.7',
 	'themes/twentynineteen/'  => '5.0',
+	'themes/twentytwenty/'    => '5.3',
 );
 
 /**
@@ -1311,7 +1312,7 @@ function _copy_dir( $from, $to, $skip_list = array() ) {
 	$to   = trailingslashit( $to );
 
 	foreach ( (array) $dirlist as $filename => $fileinfo ) {
-		if ( in_array( $filename, $skip_list ) ) {
+		if ( in_array( $filename, $skip_list, true ) ) {
 			continue;
 		}
 
