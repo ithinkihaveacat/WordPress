@@ -69,6 +69,14 @@ Load <http://localhost:8000/> and copy the CSS from the `<style amp-custom>...</
 docker-compose down
 ```
 
+To also remove the database (to enable clean reinstall):
+
+```sh
+docker-compose down --volumes
+```
+
+(See <https://docs.docker.com/compose/wordpress/#shutdown-and-cleanup>.)
+
 ## More Info
 
 * **For high-level configuration (e.g. fonts)**, check
