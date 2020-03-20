@@ -73,6 +73,7 @@
  *                                       FAQ, screenshots, other notes, and changelog. Default false.
  *         @type bool $tested            Whether to return the 'Compatible up to' value. Default true.
  *         @type bool $requires          Whether to return the required WordPress version. Default true.
+ *         @type bool $requires_php      Whether to return the required PHP version. Default true.
  *         @type bool $rating            Whether to return the rating in percent and total number of ratings.
  *                                       Default true.
  *         @type bool $ratings           Whether to return the number of rating for each star (1-5). Default true.
@@ -99,8 +100,8 @@
  *         for more information on the make-up of possible return values depending on the value of `$action`.
  */
 function plugins_api( $action, $args = array() ) {
-	// include an unmodified $wp_version
-	include( ABSPATH . WPINC . '/version.php' );
+	// Include an unmodified $wp_version.
+	require ABSPATH . WPINC . '/version.php';
 
 	if ( is_array( $args ) ) {
 		$args = (object) $args;
@@ -117,7 +118,7 @@ function plugins_api( $action, $args = array() ) {
 	}
 
 	if ( ! isset( $args->wp_version ) ) {
-		$args->wp_version = substr( $wp_version, 0, 3 ); // X.y
+		$args->wp_version = substr( $wp_version, 0, 3 ); // x.y
 	}
 
 	/**
@@ -284,7 +285,7 @@ function install_dashboard() {
 	if ( is_wp_error( $api_tags ) ) {
 		echo $api_tags->get_error_message();
 	} else {
-		//Set up the tags in a way which can be interpreted by wp_generate_tag_cloud()
+		// Set up the tags in a way which can be interpreted by wp_generate_tag_cloud().
 		$tags = array();
 		foreach ( (array) $api_tags as $tag ) {
 			$url                  = self_admin_url( 'plugin-install.php?tab=search&type=tag&s=' . urlencode( $tag['name'] ) );
@@ -436,7 +437,7 @@ function install_plugin_install_status( $api, $loop = false ) {
 		$api = (object) $api;
 	}
 
-	// Default to a "new" plugin
+	// Default to a "new" plugin.
 	$status      = 'install';
 	$url         = false;
 	$update_file = false;
@@ -469,8 +470,11 @@ function install_plugin_install_status( $api, $loop = false ) {
 					$url = wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=' . $api->slug ), 'install-plugin_' . $api->slug );
 				}
 			} else {
-				$key         = array_keys( $installed_plugin );
-				$key         = reset( $key ); //Use the first plugin regardless of the name, Could have issues for multiple-plugins in one directory if they share different version numbers
+				$key = array_keys( $installed_plugin );
+				// Use the first plugin regardless of the name.
+				// Could have issues for multiple plugins in one directory if they share different version numbers.
+				$key = reset( $key );
+
 				$update_file = $api->slug . '/' . $key;
 				if ( version_compare( $api->version, $installed_plugin[ $key ]['Version'], '=' ) ) {
 					$status = 'latest_installed';
@@ -478,7 +482,7 @@ function install_plugin_install_status( $api, $loop = false ) {
 					$status  = 'newer_installed';
 					$version = $installed_plugin[ $key ]['Version'];
 				} else {
-					//If the above update check failed, Then that probably means that the update checker has out-of-date information, force a refresh
+					// If the above update check failed, then that probably means that the update checker has out-of-date information, force a refresh.
 					if ( ! $loop ) {
 						delete_site_transient( 'update_plugins' );
 						wp_update_plugins();
@@ -487,7 +491,7 @@ function install_plugin_install_status( $api, $loop = false ) {
 				}
 			}
 		} else {
-			// "install" & no directory with that slug
+			// "install" & no directory with that slug.
 			if ( current_user_can( 'install_plugins' ) ) {
 				$url = wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=' . $api->slug ), 'install-plugin_' . $api->slug );
 			}
@@ -569,7 +573,7 @@ function install_plugin_information() {
 		'other_notes'  => _x( 'Other Notes', 'Plugin installer section title' ),
 	);
 
-	// Sanitize HTML
+	// Sanitize HTML.
 	foreach ( (array) $api->sections as $section_name => $content ) {
 		$api->sections[ $section_name ] = wp_kses( $content, $plugins_allowedtags );
 	}
@@ -582,7 +586,8 @@ function install_plugin_information() {
 
 	$_tab = esc_attr( $tab );
 
-	$section = isset( $_REQUEST['section'] ) ? wp_unslash( $_REQUEST['section'] ) : 'description'; // Default to the Description tab, Do not translate, API returns English.
+	// Default to the Description tab, Do not translate, API returns English.
+	$section = isset( $_REQUEST['section'] ) ? wp_unslash( $_REQUEST['section'] ) : 'description';
 	if ( empty( $section ) || ! isset( $api->sections[ $section ] ) ) {
 		$section_titles = array_keys( (array) $api->sections );
 		$section        = reset( $section_titles );

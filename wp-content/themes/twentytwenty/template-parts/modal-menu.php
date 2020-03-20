@@ -4,12 +4,12 @@
  *
  * @package WordPress
  * @subpackage Twenty_Twenty
- * @since 1.0.0
+ * @since Twenty Twenty 1.0
  */
 
 ?>
 
-<div class="menu-modal cover-modal header-footer-group" data-modal-target-string=".menu-modal" aria-expanded="false">
+<div class="menu-modal cover-modal header-footer-group" data-modal-target-string=".menu-modal">
 
 	<div class="menu-modal-inner modal-inner">
 

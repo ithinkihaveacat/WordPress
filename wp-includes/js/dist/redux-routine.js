@@ -82,12 +82,12 @@ this["wp"] = this["wp"] || {}; this["wp"]["reduxRoutine"] =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 403);
+/******/ 	return __webpack_require__(__webpack_require__.s = 446);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 105:
+/***/ 127:
 /***/ (function(module, exports) {
 
 module.exports = isPromise;
@@ -99,7 +99,7 @@ function isPromise(obj) {
 
 /***/ }),
 
-/***/ 114:
+/***/ 137:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -111,7 +111,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
-var _keys = __webpack_require__(221);
+var _keys = __webpack_require__(253);
 
 var _keys2 = _interopRequireDefault(_keys);
 
@@ -171,7 +171,7 @@ exports.default = is;
 
 /***/ }),
 
-/***/ 220:
+/***/ 252:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -182,7 +182,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.createChannel = exports.subscribe = exports.cps = exports.apply = exports.call = exports.invoke = exports.delay = exports.race = exports.join = exports.fork = exports.error = exports.all = undefined;
 
-var _keys = __webpack_require__(221);
+var _keys = __webpack_require__(253);
 
 var _keys2 = _interopRequireDefault(_keys);
 
@@ -312,7 +312,7 @@ var createChannel = exports.createChannel = function createChannel(callback) {
 
 /***/ }),
 
-/***/ 221:
+/***/ 253:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -336,7 +336,7 @@ exports.default = keys;
 
 /***/ }),
 
-/***/ 239:
+/***/ 274:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -347,7 +347,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.wrapControls = exports.asyncControls = exports.create = undefined;
 
-var _helpers = __webpack_require__(220);
+var _helpers = __webpack_require__(252);
 
 Object.keys(_helpers).forEach(function (key) {
   if (key === "default") return;
@@ -359,15 +359,15 @@ Object.keys(_helpers).forEach(function (key) {
   });
 });
 
-var _create = __webpack_require__(371);
+var _create = __webpack_require__(408);
 
 var _create2 = _interopRequireDefault(_create);
 
-var _async = __webpack_require__(373);
+var _async = __webpack_require__(410);
 
 var _async2 = _interopRequireDefault(_async);
 
-var _wrap = __webpack_require__(375);
+var _wrap = __webpack_require__(412);
 
 var _wrap2 = _interopRequireDefault(_wrap);
 
@@ -379,7 +379,7 @@ exports.wrapControls = _wrap2.default;
 
 /***/ }),
 
-/***/ 371:
+/***/ 408:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -389,11 +389,11 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _builtin = __webpack_require__(372);
+var _builtin = __webpack_require__(409);
 
 var _builtin2 = _interopRequireDefault(_builtin);
 
-var _is = __webpack_require__(114);
+var _is = __webpack_require__(137);
 
 var _is2 = _interopRequireDefault(_is);
 
@@ -465,7 +465,7 @@ exports.default = create;
 
 /***/ }),
 
-/***/ 372:
+/***/ 409:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -476,7 +476,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.iterator = exports.array = exports.object = exports.error = exports.any = undefined;
 
-var _is = __webpack_require__(114);
+var _is = __webpack_require__(137);
 
 var _is2 = _interopRequireDefault(_is);
 
@@ -566,7 +566,7 @@ exports.default = [error, iterator, array, object, any];
 
 /***/ }),
 
-/***/ 373:
+/***/ 410:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -577,13 +577,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.race = exports.join = exports.fork = exports.promise = undefined;
 
-var _is = __webpack_require__(114);
+var _is = __webpack_require__(137);
 
 var _is2 = _interopRequireDefault(_is);
 
-var _helpers = __webpack_require__(220);
+var _helpers = __webpack_require__(252);
 
-var _dispatcher = __webpack_require__(374);
+var _dispatcher = __webpack_require__(411);
 
 var _dispatcher2 = _interopRequireDefault(_dispatcher);
 
@@ -688,7 +688,7 @@ exports.default = [promise, fork, join, race, subscribe];
 
 /***/ }),
 
-/***/ 374:
+/***/ 411:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -721,7 +721,7 @@ exports.default = createDispatcher;
 
 /***/ }),
 
-/***/ 375:
+/***/ 412:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -732,7 +732,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.cps = exports.call = undefined;
 
-var _is = __webpack_require__(114);
+var _is = __webpack_require__(137);
 
 var _is2 = _interopRequireDefault(_is);
 
@@ -764,7 +764,7 @@ exports.default = [call, cps];
 
 /***/ }),
 
-/***/ 403:
+/***/ 446:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -781,17 +781,19 @@ __webpack_require__.r(__webpack_exports__);
  * @return {boolean} Whether object is a generator.
  */
 function isGenerator(object) {
-  return !!object && object[Symbol.toStringTag] === 'Generator';
+  // Check that iterator (next) and iterable (Symbol.iterator) interfaces are satisfied.
+  // These checks seem to be compatible with several generator helpers as well as the native implementation.
+  return !!object && typeof object[Symbol.iterator] === 'function' && typeof object.next === 'function';
 }
 
 // EXTERNAL MODULE: ./node_modules/rungen/dist/index.js
-var dist = __webpack_require__(239);
+var dist = __webpack_require__(274);
 
-// EXTERNAL MODULE: external "lodash"
-var external_lodash_ = __webpack_require__(2);
+// EXTERNAL MODULE: external {"this":"lodash"}
+var external_this_lodash_ = __webpack_require__(2);
 
 // EXTERNAL MODULE: ./node_modules/is-promise/index.js
-var is_promise = __webpack_require__(105);
+var is_promise = __webpack_require__(127);
 var is_promise_default = /*#__PURE__*/__webpack_require__.n(is_promise);
 
 // CONCATENATED MODULE: ./node_modules/@wordpress/redux-routine/build-module/is-action.js
@@ -808,7 +810,7 @@ var is_promise_default = /*#__PURE__*/__webpack_require__.n(is_promise);
  */
 
 function isAction(object) {
-  return Object(external_lodash_["isPlainObject"])(object) && Object(external_lodash_["isString"])(object.type);
+  return Object(external_this_lodash_["isPlainObject"])(object) && Object(external_this_lodash_["isString"])(object.type);
 }
 /**
  * Returns true if the given object quacks like an action and has a specific
@@ -848,7 +850,7 @@ function isActionOfType(object, expectedType) {
 function createRuntime() {
   var controls = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   var dispatch = arguments.length > 1 ? arguments[1] : undefined;
-  var rungenControls = Object(external_lodash_["map"])(controls, function (control, actionType) {
+  var rungenControls = Object(external_this_lodash_["map"])(controls, function (control, actionType) {
     return function (value, next, iterate, yieldNext, yieldError) {
       if (!isActionOfType(value, actionType)) {
         return false;

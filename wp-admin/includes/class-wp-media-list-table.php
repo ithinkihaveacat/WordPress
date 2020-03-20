@@ -222,7 +222,11 @@ class WP_Media_List_Table extends WP_List_Table {
 	/**
 	 */
 	public function no_items() {
-		_e( 'No media files found.' );
+		if ( $this->is_trash ) {
+			_e( 'No media files found in Trash.' );
+		} else {
+			_e( 'No media files found.' );
+		}
 	}
 
 	/**
@@ -452,19 +456,14 @@ class WP_Media_List_Table extends WP_List_Table {
 		if ( '0000-00-00 00:00:00' === $post->post_date ) {
 			$h_time = __( 'Unpublished' );
 		} else {
-			$m_time = $post->post_date;
-			$time   = get_post_time( 'G', true, $post, false );
-			$t_diff = time() - $time;
-			if ( ( abs( $t_diff ) ) < DAY_IN_SECONDS ) {
-				if ( $t_diff < 0 ) {
-					/* translators: %s: Human-readable time difference. */
-					$h_time = sprintf( __( '%s from now' ), human_time_diff( $time ) );
-				} else {
-					/* translators: %s: Human-readable time difference. */
-					$h_time = sprintf( __( '%s ago' ), human_time_diff( $time ) );
-				}
+			$time      = get_post_timestamp( $post );
+			$time_diff = time() - $time;
+
+			if ( $time && $time_diff > 0 && $time_diff < DAY_IN_SECONDS ) {
+				/* translators: %s: Human-readable time difference. */
+				$h_time = sprintf( __( '%s ago' ), human_time_diff( $time ) );
 			} else {
-				$h_time = mysql2date( __( 'Y/m/d' ), $m_time );
+				$h_time = get_the_time( __( 'Y/m/d' ), $post );
 			}
 		}
 
@@ -631,8 +630,8 @@ class WP_Media_List_Table extends WP_List_Table {
 		while ( have_posts() ) :
 			the_post();
 			if (
-				( $this->is_trash && $post->post_status != 'trash' )
-				|| ( ! $this->is_trash && $post->post_status === 'trash' )
+				( $this->is_trash && 'trash' !== $post->post_status )
+				|| ( ! $this->is_trash && 'trash' === $post->post_status )
 			) {
 				continue;
 			}
@@ -786,7 +785,8 @@ class WP_Media_List_Table extends WP_List_Table {
 	 * @param object $post        Attachment being acted upon.
 	 * @param string $column_name Current column name.
 	 * @param string $primary     Primary column name.
-	 * @return string Row actions output for media attachments.
+	 * @return string Row actions output for media attachments, or an empty string
+	 *                if the current column is not the primary column.
 	 */
 	protected function handle_row_actions( $post, $column_name, $primary ) {
 		if ( $primary !== $column_name ) {
@@ -794,6 +794,7 @@ class WP_Media_List_Table extends WP_List_Table {
 		}
 
 		$att_title = _draft_or_post_title();
+
 		return $this->row_actions( $this->_get_row_actions( $post, $att_title ) );
 	}
 }

@@ -178,9 +178,9 @@ function wp_print_media_templates() {
 	<?php // Template for the media frame: used both in the media grid and in the media modal. ?>
 	<script type="text/html" id="tmpl-media-frame">
 		<div class="media-frame-title" id="media-frame-title"></div>
-		<h2 class="media-frame-menu-heading"><?php _e( 'Media Types' ); ?></h2>
+		<h2 class="media-frame-menu-heading"><?php _ex( 'Actions', 'media modal menu actions' ); ?></h2>
 		<button type="button" class="button button-link media-frame-menu-toggle" aria-expanded="false">
-			<?php _e( 'Media Types' ); ?>
+			<?php _ex( 'Menu', 'media modal menu' ); ?>
 			<span class="dashicons dashicons-arrow-down" aria-hidden="true"></span>
 		</button>
 		<div class="media-frame-menu"></div>
@@ -188,7 +188,12 @@ function wp_print_media_templates() {
 			<div class="media-frame-router"></div>
 			<div class="media-frame-content"></div>
 		</div>
-		<h2 class="media-frame-actions-heading screen-reader-text"><?php _e( 'Available actions' ); ?></h2>
+		<h2 class="media-frame-actions-heading screen-reader-text">
+		<?php
+			/* translators: Accessibility text. */
+			_e( 'Selected media actions' );
+		?>
+		</h2>
 		<div class="media-frame-toolbar"></div>
 		<div class="media-frame-uploader"></div>
 	</script>
@@ -313,7 +318,7 @@ function wp_print_media_templates() {
 		<a href="<?php echo esc_url( add_query_arg( 'mode', 'list', $_SERVER['REQUEST_URI'] ) ); ?>" class="view-list">
 			<span class="screen-reader-text"><?php _e( 'List View' ); ?></span>
 		</a>
-		<a href="<?php echo esc_url( add_query_arg( 'mode', 'grid', $_SERVER['REQUEST_URI'] ) ); ?>" class="view-grid current">
+		<a href="<?php echo esc_url( add_query_arg( 'mode', 'grid', $_SERVER['REQUEST_URI'] ) ); ?>" class="view-grid current" aria-current="page">
 			<span class="screen-reader-text"><?php _e( 'Grid View' ); ?></span>
 		</a>
 	</script>
@@ -419,6 +424,11 @@ function wp_print_media_templates() {
 							printf( __( '%1$s by %2$s pixels' ), '{{ data.width }}', '{{ data.height }}' );
 							?>
 						</div>
+					<# } #>
+
+					<# if ( data.originalImageURL && data.originalImageName ) { #>
+						<?php _e( 'Original image:' ); ?>
+						<a href="{{ data.originalImageURL }}">{{data.originalImageName}}</a>
 					<# } #>
 				<# } #>
 
@@ -609,6 +619,11 @@ function wp_print_media_templates() {
 							printf( __( '%1$s by %2$s pixels' ), '{{ data.width }}', '{{ data.height }}' );
 							?>
 						</div>
+					<# } #>
+
+					<# if ( data.originalImageURL && data.originalImageName ) { #>
+						<?php _e( 'Original image:' ); ?>
+						<a href="{{ data.originalImageURL }}">{{data.originalImageName}}</a>
 					<# } #>
 
 					<# if ( data.can.save && data.sizes ) { #>
