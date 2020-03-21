@@ -12,8 +12,11 @@ cp src/functions.php pkg/beebo
 
 mkdir -p pkg/beebo/font/finlandica
 cp src/font/finlandica/* pkg/beebo/font/finlandica
-mkdir -p pkg/beebo/font/vollkorn
-cp src/font/vollkorn/Vollkorn-{Medium,MediumItalic,Bold,BoldItalic}* pkg/beebo/font/vollkorn
+mkdir -p pkg/beebo/font/rubik
+cp src/font/rubik/* pkg/beebo/font/rubik
+
+#mkdir -p pkg/beebo/font/vollkorn
+#cp src/font/vollkorn/Vollkorn-{Medium,MediumItalic,Bold,BoldItalic}* pkg/beebo/font/vollkorn
 
 rm -rf beebo.zip
 

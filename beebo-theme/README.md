@@ -69,6 +69,16 @@ Load <http://localhost:8000/> and copy the CSS from the `<style amp-custom>...</
 docker-compose down
 ```
 
+### Destroy the Docker containers
+
+(To wipe the WordPress installation.)
+
+```sh
+docker volume prune
+```
+
+(State is persisted to the `db_name` volume; this needs to be wiped.)
+
 ## More Info
 
 * **For high-level configuration (e.g. fonts)**, check
@@ -76,6 +86,7 @@ docker-compose down
   [`_fonts.scss`](https://github.com/WordPress/WordPress/blob/master/wp-content/themes/twentynineteen/sass/variables-site/_fonts.scss)
   and
   [`_colors.scss`](https://github.com/WordPress/WordPress/blob/master/wp-content/themes/twentynineteen/sass/variables-site/_colors.scss).
+* If custom fonts are loaded via `@font-face`, this will probably be happening in [`_fontface.scss`](https://github.com/WordPress/WordPress/blob/master/wp-content/themes/twentynineteen/sass/typography/_fontface.scss).
 * For info on **what styles/templates are "supported" by the generated CSS**,
   you'll need to look at either the generated HTML (i.e. use WordPress to
   create a sample page, inspect the generated HTML), or the PHP source code. (There's no CSS common across all WordPress themes, although many are based on [`_s`](https://github.com/automattic/_s).)
@@ -97,3 +108,5 @@ docker-compose down
   `wp-content/themes/twentynineteen/style.css`, while developing it may be
   useful to get git to ignore any (local) changes to this file via `git
   update-index --skip-worktree wp-content/themes/twentynineteen/style.css`.
+* For "live" editing and debugging, use the "Theme Editor" section of the
+  "Appearance" menu. This lets you edit the generated CSS, for example.
