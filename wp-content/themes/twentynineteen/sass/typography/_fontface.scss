@@ -217,3 +217,74 @@ $fontface_url_prefix: "font";
 //   font-weight: 900;
 //   font-style: normal;
 // }
+
+// From https://github.com/golang/blog/blob/master/static/fonts.css
+@font-face {
+  font-family: "Go";
+  src: url("#{$fontface_url_prefix}/go/GoMedium-Italic.woff") format("woff");
+  font-weight: 500;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Go";
+  src: url("#{$fontface_url_prefix}/go/Go-Italic.woff") format("woff");
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Go";
+  src: url("#{$fontface_url_prefix}/go/Go-Bold.woff") format("woff");
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Go";
+  src: url("#{$fontface_url_prefix}/go/GoMedium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Go";
+  src: url("#{$fontface_url_prefix}/go/Go-BoldItalic.woff") format("woff");
+  font-weight: bold;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Go";
+  src: url("#{$fontface_url_prefix}/go/GoRegular.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Go Mono";
+  src: url("#{$fontface_url_prefix}/go/GoMono-Bold.woff") format("woff");
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Go Mono";
+  src: url("#{$fontface_url_prefix}/go/GoMono.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Go Mono";
+  src: url("#{$fontface_url_prefix}/go/GoMono-Italic.woff") format("woff");
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Go Mono";
+  src: url("#{$fontface_url_prefix}/go/GoMono-BoldItalic.woff") format("woff");
+  font-weight: bold;
+  font-style: italic;
+}
