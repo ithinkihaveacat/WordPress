@@ -14,6 +14,8 @@ mkdir -p pkg/beebo/font/finlandica
 cp src/font/finlandica/* pkg/beebo/font/finlandica
 mkdir -p pkg/beebo/font/rubik
 cp src/font/rubik/* pkg/beebo/font/rubik
+mkdir -p pkg/beebo/font/inria-sans
+cp src/font/inria-sans/* pkg/beebo/font/inria-sans
 
 #mkdir -p pkg/beebo/font/vollkorn
 #cp src/font/vollkorn/Vollkorn-{Medium,MediumItalic,Bold,BoldItalic}* pkg/beebo/font/vollkorn
