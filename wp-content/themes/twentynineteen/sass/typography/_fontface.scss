@@ -295,46 +295,37 @@ $fontface_url_prefix: "font";
   font-family: "Inria Sans";
   font-style: normal;
   font-weight: 400;
-  src: local("Inria Sans Regular"), local("InriaSans-Regular"),
-    url("#{$fontface_url_prefix}/inria-sans/inria-sans-v1-latin_latin-ext-regular.woff2")
+  src: url("#{$fontface_url_prefix}/inria-sans/InriaSans-Regular.woff2")
       format("woff2"),
-    /* Chrome 26+, Opera 23+, Firefox 39+ */
-      url("#{$fontface_url_prefix}/inria-sans/inria-sans-v1-latin_latin-ext-regular.woff")
-      format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+    url("#{$fontface_url_prefix}/inria-sans/InriaSans-Regular.woff")
+      format("woff");
 }
 /* inria-sans-italic - latin_latin-ext */
 @font-face {
   font-family: "Inria Sans";
   font-style: italic;
   font-weight: 400;
-  src: local("Inria Sans Italic"), local("InriaSans-Italic"),
-    url("#{$fontface_url_prefix}/inria-sans/inria-sans-v1-latin_latin-ext-italic.woff2")
+  src: url("#{$fontface_url_prefix}/inria-sans/InriaSans-Italic.woff2")
       format("woff2"),
-    /* Chrome 26+, Opera 23+, Firefox 39+ */
-      url("#{$fontface_url_prefix}/inria-sans/inria-sans-v1-latin_latin-ext-italic.woff")
-      format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+    url("#{$fontface_url_prefix}/inria-sans/InriaSans-Italic.woff")
+      format("woff");
 }
 /* inria-sans-700 - latin_latin-ext */
 @font-face {
   font-family: "Inria Sans";
   font-style: normal;
   font-weight: 700;
-  src: local("Inria Sans Bold"), local("InriaSans-Bold"),
-    url("#{$fontface_url_prefix}/inria-sans/inria-sans-v1-latin_latin-ext-700.woff2")
+  src: url("#{$fontface_url_prefix}/inria-sans/InriaSans-Bold.woff2")
       format("woff2"),
-    /* Chrome 26+, Opera 23+, Firefox 39+ */
-      url("#{$fontface_url_prefix}/inria-sans/inria-sans-v1-latin_latin-ext-700.woff")
-      format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+    url("#{$fontface_url_prefix}/inria-sans/InriaSans-Bold.woff") format("woff");
 }
 /* inria-sans-700italic - latin_latin-ext */
 @font-face {
   font-family: "Inria Sans";
   font-style: italic;
   font-weight: 700;
-  src: local("Inria Sans Bold Italic"), local("InriaSans-BoldItalic"),
-    url("#{$fontface_url_prefix}/inria-sans/inria-sans-v1-latin_latin-ext-700italic.woff2")
+  src: url("#{$fontface_url_prefix}/inria-sans/InriaSans-BoldItalic.woff2")
       format("woff2"),
-    /* Chrome 26+, Opera 23+, Firefox 39+ */
-      url("#{$fontface_url_prefix}/inria-sans/inria-sans-v1-latin_latin-ext-700italic.woff")
-      format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+    url("#{$fontface_url_prefix}/inria-sans/InriaSans-BoldItalic.woff")
+      format("woff");
 }

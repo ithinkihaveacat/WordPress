@@ -13,6 +13,7 @@ body {
 	line-height: $font__line-height-body;
 	margin: 0;
 	text-rendering: optimizeLegibility;
+	font-feature-settings: 'pnum', 'onum';
 }
 
 button,

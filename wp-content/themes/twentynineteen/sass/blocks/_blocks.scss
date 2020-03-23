@@ -496,7 +496,7 @@
 			 * This requires a rem-based font size calculation instead of our normal em-based one,
 			 * because the cite tag sometimes gets wrapped in a p tag. This is equivalent to $font-size_xs.
 			 */
-			font-size: calc(1rem / (1.25 * #{$font__size-ratio}));
+			font-size: calc(1rem / (1 * #{$font__size-ratio}));
 		}
 
 		&.is-large,
