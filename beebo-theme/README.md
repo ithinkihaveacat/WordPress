@@ -63,6 +63,11 @@ Note: if updating the theme, you may have to remove it first via
 
 Load <http://localhost:8000/> and copy the CSS from the `<style amp-custom>...</style>`.
 
+### Remove "localhost" prefix
+
+Replace the font asset prefix (probably
+`http://localhost:8000/wp-content/themes/beebo`) with whatever makes sense.
+
 ### Stop the Docker container
 
 ```sh
