@@ -59,14 +59,16 @@ activate it.
 Note: if updating the theme, you may have to remove it first via
 <http://localhost:8000/wp-admin/themes.php?theme=beebo>.
 
-### Extract the transformed and manipulated CSS
+### Transform the theme
 
-Load <http://localhost:8000/> and copy the CSS from the `<style amp-custom>...</style>`.
+```sh
+getcat 'http://localhost:8000' | tr -d '\n' | perl -wpe 's{.*<style amp-custom="">(.*?)</style>.*}{$1}s; s{http://localhost:8000/wp-content/themes/beebo/font/}{/assets/}s;' | pbcopy
+```
 
-### Remove "localhost" prefix
+The two steps this does are:
 
-Replace the font asset prefix (probably
-`http://localhost:8000/wp-content/themes/beebo`) with whatever makes sense.
+  1. **Extract the transformed and manipulated CSS**
+  1. **Remove "localhost" prefix and adjust font paths**
 
 ### Stop the Docker container
 
@@ -92,6 +94,7 @@ docker volume prune
   and
   [`_colors.scss`](https://github.com/WordPress/WordPress/blob/master/wp-content/themes/twentynineteen/sass/variables-site/_colors.scss).
 * If custom fonts are loaded via `@font-face`, this will probably be happening in [`_fontface.scss`](https://github.com/WordPress/WordPress/blob/master/wp-content/themes/twentynineteen/sass/typography/_fontface.scss).
+* The header "dots" are controlled by the `#page` selector in `_layout.scss`.
 * For info on **what styles/templates are "supported" by the generated CSS**,
   you'll need to look at either the generated HTML (i.e. use WordPress to
   create a sample page, inspect the generated HTML), or the PHP source code. (There's no CSS common across all WordPress themes, although many are based on [`_s`](https://github.com/automattic/_s).)

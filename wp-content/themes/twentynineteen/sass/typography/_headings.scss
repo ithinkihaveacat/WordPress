@@ -45,7 +45,7 @@ h4,
 h5,
 h6 {
 	font-weight: 700;
-	letter-spacing: -0.02em;
+	// letter-spacing: -0.02em;
 	line-height: $font__line-height-heading;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -135,9 +135,9 @@ h6 {
 	font-weight: bold;
 }
 
-.site-description {
-	letter-spacing: -0.01em;
-}
+// .site-description {
+	// letter-spacing: -0.01em;
+// }
 
 .post-navigation .post-title,
 .entry-title,
@@ -165,4 +165,10 @@ blockquote {
 
 h1, h2, h3, h4, h5, h6 {
 	font-feature-settings: 'ss01';
+}
+
+.site-title a {
+	font-family: "CA Aires Pro";
+	text-transform: uppercase;
+	font-size: $font__size-xxl
 }
