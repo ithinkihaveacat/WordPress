@@ -62,7 +62,7 @@ Note: if updating the theme, you may have to remove it first via
 ### Transform the theme
 
 ```sh
-getcat 'http://localhost:8000' | tr -d '\n' | perl -wpe 's{.*<style amp-custom="">(.*?)</style>.*}{$1}s; s{http://localhost:8000/wp-content/themes/beebo/font/}{/assets/}s;' | pbcopy
+getcat 'http://localhost:8000' | tr -d '\n' | perl -wpe 's{.*<style amp-custom="">(.*?)</style>.*}{$1}s; s{http://localhost:8000/wp-content/themes/beebo/font/}{/assets/}sg;' | pbcopy
 ```
 
 The two steps this does are:
