@@ -115,6 +115,8 @@ docker volume prune
 * Since running `./build` will create a new
   `wp-content/themes/twentynineteen/style.css`, while developing it may be
   useful to get git to ignore any (local) changes to this file via `git
-  update-index --skip-worktree wp-content/themes/twentynineteen/style.css`.
+  update-index --skip-worktree
+  wp-content/themes/twentynineteen/style.css`. (To revert, use
+  `--no-skip-worktree`.) 
 * For "live" editing and debugging, use the "Theme Editor" section of the
   "Appearance" menu. This lets you edit the generated CSS, for example.
